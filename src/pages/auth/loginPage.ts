@@ -21,6 +21,11 @@ export class LoginPage extends Page {
     await this.page.waitForLoadState();
   }
 
+  async waitForLoad() {
+    await this.page.waitForURL(this.pageUrl);
+    await expect(this.page).toHaveTitle("Login");
+  }
+
   async enterCredential(email: string, password: string) {
     await this.email.fill(email);
     await this.password.fill(password);
