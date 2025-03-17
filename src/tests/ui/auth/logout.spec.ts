@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { LoginPage } from "../../pages/auth/loginPage";
-import { UserVuexPage } from "../../pages/system/userVuexPage";
+import { LoginPage } from "../../../pages/auth/loginPage";
+import { UserVuexPage } from "../../../pages/system/userVuexPage";
 import testData from "../testData/testLoginData.json";
-import { NavigationBar } from "../../pages/system/navigationBar";
+import { NavigationBar } from "../../../pages/system/navigationBar";
 
 test.beforeEach(async ({ page }) => {
   //Login via API
