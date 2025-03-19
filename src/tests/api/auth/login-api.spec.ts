@@ -3,16 +3,22 @@ import { apiClient } from "../../../utils/apiClient";
 import testData from "../testData/testLoginData.json";
 
 test.describe("Login API", () => {
-  test("should login successfully with valid credentials", async () => {
-    const response = await apiClient.post("/api/login", {
-      email: testData.validEmail,
-      password: testData.validPassword,
+  test("should login successfully with valid credentials", async ({
+    request,
+  }) => {
+    const response = await request.post(`${process.env.SERVER_URL}/api/login`, {
+      data: {
+        email: testData.validEmail,
+        password: testData.validPassword,
+      },
     });
 
-    expect(response.status).toBe(200);
-    expect(response.data.errCode).toBe(0);
-    expect(response.data).toHaveProperty("token");
-    expect(response.data).toHaveProperty("userInfor");
+    let data = await response.json();
+
+    expect(response.status()).toBe(200);
+    expect(data.errCode).toBe(0);
+    expect(data).toHaveProperty("token");
+    expect(data).toHaveProperty("userInfor");
   });
 
   test("should fail to login with missing email", async () => {
