@@ -6,4 +6,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 
+/src/tests/api/testData/createUser.json
+/src/tests/api/testData/randomUser.json
+
 .env

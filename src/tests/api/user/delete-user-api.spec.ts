@@ -6,7 +6,7 @@ let userId: string;
 test.describe("Delete User API", () => {
   test.beforeAll(async ({ authToken, createUser }) => {
     token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-    userId = process.env.USER_ID ? process.env.USER_ID : "";
+    userId = createUser.id;
     console.log("check userId: ", userId);
   });
 

@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import fs from "fs";
 
 export function createRandomUserInfor(role?: string) {
   let randomLastname = faker.person.lastName();
@@ -36,6 +37,8 @@ export function createRandomUserInfor(role?: string) {
     positionId: randomPositionId,
     password: "123456",
   };
+  const userFile = "src/tests/api/testData/randomUser.json";
+  fs.writeFileSync(userFile, JSON.stringify(user));
   return user;
 }
 

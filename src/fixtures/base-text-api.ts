@@ -3,10 +3,23 @@ import { Page } from "../pages/basePage";
 import fs from "fs";
 import { createRandomUserInfor } from "../utils/helper";
 
+type User = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  phonenumber: string;
+  gender: string;
+  image: string;
+  roleId: string;
+  positionId: string;
+};
+
 type TestOptions = {
   page: Page;
   authToken: string;
-  createUser: string;
+  createUser: User;
 };
 
 const authFile = ".auth/user.json";
@@ -44,10 +57,9 @@ export const test = base.extend<TestOptions>({
       }
     );
     let data = await response.json();
-    const userFile = "src/tests/api/testData/user.json";
-    fs.writeFileSync(userFile, JSON.stringify(data));
-    process.env["USER_ID"] = data.user.id;
-    await use(data);
+    const userFile = "src/tests/api/testData/createUser.json";
+    fs.writeFileSync(userFile, JSON.stringify(data.user));
+    await use(data.user);
   },
 
   page: async ({ page }, use) => {
