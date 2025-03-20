@@ -11,6 +11,16 @@ type Specialty = {
   descriptionHTML: string;
 };
 
+type Clinic = {
+  id?: string;
+  name: string;
+  address: string;
+  descriptionMarkdown: string;
+  descriptionHTML: string;
+  provinceId: string;
+  image: string;
+};
+
 const _imagePath = path.resolve(
   __dirname,
   "../tests/api/testData/image-test.png"
@@ -92,6 +102,46 @@ export function createRandomSpecialtyInfor(imagePath?: string) {
   return specialty;
 }
 
-function randomValue(array: string[]) {
+export async function createClinic(token: string) {
+  const clinicInfor = await createRandomClinicInfor();
+  const response = await axios.post(
+    `${process.env.SERVER_URL}/api/create-clinic`,
+    clinicInfor,
+    { headers: { Authorization: token } }
+  );
+  let clinic: Clinic = response.data.clinic;
+  return clinic;
+}
+
+export async function createRandomClinicInfor(imagePath?: string) {
+  if (!imagePath) {
+    imagePath = _imagePath;
+  }
+  const provinces = await getAllcode("PROVINCE");
+  const description = faker.book.title();
+  let clinic = {
+    name: `Clinic Name Test - ${faker.number.int(1000)}`,
+    address: faker.location.city(),
+    descriptionMarkdown: `**${description}**`,
+    descriptionHTML: `<p><strong>${description}</strong></p>`,
+    provinceId: randomValue(provinces).key,
+    image: `data:image/png;base64, ${getImageBase64(imagePath)}`,
+  };
+  return clinic;
+}
+
+/**
+ * The function to get values in db such as: role of user, status booking, time for booking, position of user..
+ * @param inputType included ROLE, STATUS, TIME, POSITION, GENDER, PRICE, PAYMENT, PROVINCE
+ */
+export async function getAllcode(inputType: string) {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/allcode?type=${inputType}`
+  );
+  let data = response.data;
+  return data.data;
+}
+
+function randomValue(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }

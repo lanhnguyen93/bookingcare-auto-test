@@ -50,7 +50,7 @@ test.describe("Create specialty API", () => {
     expect(data.message).toEqual("Authorization token is required.");
   });
 
-  test("should fail to create a user with invalid authorization", async ({
+  test("should fail to create with invalid authorization", async ({
     request,
   }) => {
     const response = await request.post(
@@ -185,7 +185,7 @@ test.describe("Delete specialty API", () => {
     let data = await response.json();
     expect(response.status()).toEqual(200);
     expect(data.errCode).toEqual(1);
-    expect(data.message).toEqual("The user is not exist!");
+    expect(data.message).toEqual("The specialty is not exist!");
   });
 
   test("should fail to delete without authorization", async ({ request }) => {
