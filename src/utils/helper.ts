@@ -26,41 +26,48 @@ const _imagePath = path.resolve(
   "../tests/api/testData/image-test.png"
 );
 
+export async function createUser(token: string, role?: string) {
+  const randomUser = createRandomUserInfor(role);
+  const response = await axios.post(
+    `${process.env.SERVER_URL}/api/create-new-user`,
+    randomUser,
+    { headers: { Authorization: token } }
+  );
+  let user = await response.data.user;
+  return user;
+}
+
 export function createRandomUserInfor(role?: string) {
   let randomLastname = faker.person.lastName();
   let randomFirstname = faker.person.firstName();
-  let randomEmail = `${randomFirstname}${randomLastname}.${faker.number.int(
-    1000
-  )}@test.com`;
-  let randomPhonenumber = faker.phone.number();
-  let randomAddress = faker.location.city();
-  let randomGenderId = randomValue(["M", "F", "O"]);
-  let randomPositionId = randomValue(["P0", "P1", "P2", "P3", "P4"]);
-  let roleId = "";
-  switch (role) {
-    case "Admin":
+  let roleId: string;
+  switch (role?.toLocaleLowerCase()) {
+    case "admin":
       roleId = "R1";
       break;
-    case "Doctor":
+    case "doctor":
       roleId = "R2";
       break;
-    case "Patient":
+    case "patient":
       roleId = "R3";
       break;
     default:
       roleId = "R1";
   }
-
   const user = {
-    email: randomEmail,
+    email: `${randomFirstname}${randomLastname}.${faker.number.int(
+      1000
+    )}@test.com`,
     firstName: randomFirstname,
     lastName: randomLastname,
-    address: randomAddress,
-    phonenumber: randomPhonenumber,
-    gender: randomGenderId,
+    address: faker.location.city(),
+    phonenumber: faker.phone.number(),
+    gender: randomValue(["M", "F", "O"]),
     roleId: roleId,
-    positionId: randomPositionId,
+    // dont use positionId when creating user
+    // positionId: randomValue(["P0", "P1", "P2", "P3", "P4"]),
     password: "123456",
+    image: `data:image/png;base64, ${getImageBase64(_imagePath)}`,
   };
   const userFile = "src/tests/api/testData/randomUser.json";
   fs.writeFileSync(userFile, JSON.stringify(user));
@@ -130,6 +137,27 @@ export async function createRandomClinicInfor(imagePath?: string) {
   return clinic;
 }
 
+export async function createRandomDoctorInfor() {
+  const prices = await getAllcode("PRICE");
+  const payments = await getAllcode("PAYMENT");
+  const description = faker.book.title();
+  const clinics = await getAllClinics();
+  const clinic = randomValue(clinics);
+  const specialties = await getAllSpecialties();
+  let doctorInfor = {
+    priceId: randomValue(prices).key,
+    paymentId: randomValue(payments).key,
+    provinceId: clinic.provinceId,
+    clinicId: clinic.id,
+    specialtyId: randomValue(specialties).id,
+    contentMarkdown: `**${description}**`,
+    contentHTML: `<p><strong>${description}</strong></p>`,
+    description: faker.animal.cat(),
+    note: faker.animal.dog(),
+  };
+  return doctorInfor;
+}
+
 /**
  * The function to get values in db such as: role of user, status booking, time for booking, position of user..
  * @param inputType included ROLE, STATUS, TIME, POSITION, GENDER, PRICE, PAYMENT, PROVINCE
@@ -140,6 +168,24 @@ export async function getAllcode(inputType: string) {
   );
   let data = response.data;
   return data.data;
+}
+
+export async function getAllClinics() {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-all-clinics`,
+    { params: { id: "ALL" } }
+  );
+  let data = response.data;
+  return data.clinics;
+}
+
+export async function getAllSpecialties() {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-all-specialty`,
+    { params: { id: "ALL" } }
+  );
+  let data = response.data;
+  return data.specialties;
 }
 
 function randomValue(array: any[]) {
