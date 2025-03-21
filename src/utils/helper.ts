@@ -158,6 +158,20 @@ export async function createRandomDoctorInfor() {
   return doctorInfor;
 }
 
+export async function createRandomSchedule(doctorId: string, _date?: string) {
+  let date: string = _date ? _date : getRandomDateWithin7Days();
+  const timeTypes = await getAllcode("TIME");
+  const randomTimetypes = getRandomElements(timeTypes);
+
+  const schedule = randomTimetypes.map((timeType) => ({
+    doctorId: doctorId,
+    date: date,
+    timeType: timeType.key,
+  }));
+
+  return schedule;
+}
+
 /**
  * The function to get values in db such as: role of user, status booking, time for booking, position of user..
  * @param inputType included ROLE, STATUS, TIME, POSITION, GENDER, PRICE, PAYMENT, PROVINCE
@@ -190,4 +204,19 @@ export async function getAllSpecialties() {
 
 function randomValue(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
+}
+
+export function getRandomDateWithin7Days(): string {
+  const today = new Date();
+  const randomDays = Math.floor(Math.random() * 8);
+  const randomDate = new Date(today);
+  randomDate.setDate(today.getDate() + randomDays);
+  const formattedDate = randomDate.toISOString().split("T")[0];
+  return formattedDate;
+}
+
+function getRandomElements(array: any[]) {
+  const count = Math.floor(Math.random() * array.length) + 1;
+  const shuffled = [...array].sort(() => 0.5 - Math.random()); // Trộn ngẫu nhiên mảng
+  return shuffled.slice(0, count); // Lấy `count` phần tử đầu tiên
 }
