@@ -1,4 +1,4 @@
-import { test, expect } from "../../../fixtures/base-text-api";
+import { test, expect } from "../../../fixtures/base-test-api";
 import user from "../../../../.auth/user.json";
 
 test("should get all users successfully", async ({ request }) => {

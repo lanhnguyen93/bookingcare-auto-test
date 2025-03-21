@@ -1,4 +1,4 @@
-import { test, expect } from "../../../fixtures/base-text-api";
+import { test, expect } from "../../../fixtures/base-test-api";
 import { createRandomDoctorInfor, createUser } from "../../../utils/helper";
 
 let token: string;

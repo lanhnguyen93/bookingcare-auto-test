@@ -1,5 +1,4 @@
-import { request } from "http";
-import { test, expect } from "../../../fixtures/base-text-api";
+import { test, expect } from "../../../fixtures/base-test-api";
 import { createRandomUserInfor } from "../../../utils/helper";
 
 let token: string;

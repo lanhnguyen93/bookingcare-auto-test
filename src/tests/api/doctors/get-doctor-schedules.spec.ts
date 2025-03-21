@@ -1,5 +1,5 @@
 import { da } from "@faker-js/faker";
-import { test, expect } from "../../../fixtures/base-text-api";
+import { test, expect } from "../../../fixtures/base-test-api";
 import { createRandomSchedule, createUser } from "../../../utils/helper";
 
 let token: string;
