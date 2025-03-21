@@ -2,24 +2,7 @@ import { faker } from "@faker-js/faker";
 import fs from "fs";
 import axios from "axios";
 import path from "path";
-
-type Specialty = {
-  id?: string;
-  name: string;
-  image: string;
-  descriptionMarkdown: string;
-  descriptionHTML: string;
-};
-
-type Clinic = {
-  id?: string;
-  name: string;
-  address: string;
-  descriptionMarkdown: string;
-  descriptionHTML: string;
-  provinceId: string;
-  image: string;
-};
+import * as Types from "./typesBase";
 
 const _imagePath = path.resolve(
   __dirname,
@@ -91,7 +74,7 @@ export async function createSpecialty(token: string) {
     specialtyInfor,
     { headers: { Authorization: token } }
   );
-  let specialty: Specialty = response.data.specialty;
+  let specialty: Types.Specialty = response.data.specialty;
   return specialty;
 }
 
@@ -116,7 +99,7 @@ export async function createClinic(token: string) {
     clinicInfor,
     { headers: { Authorization: token } }
   );
-  let clinic: Clinic = response.data.clinic;
+  let clinic: Types.Clinic = response.data.clinic;
   return clinic;
 }
 
@@ -144,7 +127,7 @@ export async function createRandomDoctorInfor() {
   const clinics = await getAllClinics();
   const clinic = randomValue(clinics);
   const specialties = await getAllSpecialties();
-  let doctorInfor = {
+  let doctorInfor: Types.DoctorInfor = {
     priceId: randomValue(prices).key,
     paymentId: randomValue(payments).key,
     provinceId: clinic.provinceId,
@@ -170,6 +153,21 @@ export async function createRandomSchedule(doctorId: string, _date?: string) {
   }));
 
   return schedule;
+}
+
+export async function createRandomBookingInfor() {
+  let randomFullname = faker.person.fullName();
+  const booking: Types.Booking = {
+    email: `${randomFullname}.${faker.number.int(1000)}@test.com`,
+    // email: "testviewpoint93@gmail.com",
+    // firstName: "Lanh Nguyen",
+    firstName: randomFullname,
+    lang: randomValue(["vi", "en"]),
+    phonenumber: faker.phone.number(),
+    reason: faker.book.title(),
+    address: faker.location.city(),
+  };
+  return booking;
 }
 
 /**
