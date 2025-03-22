@@ -1,5 +1,12 @@
+import { da } from "@faker-js/faker";
 import { test, expect } from "../../../fixtures/base-test";
-import { createRandomBookingInfor } from "../../../utils/helper";
+import {
+  createRandomBookingInfor,
+  deleteBooking,
+  deleteDoctorInfor,
+  deleteSchedule,
+  deleteUser,
+} from "../../../utils/helper";
 import * as Types from "../../../utils/typesBase";
 
 let token: string;
@@ -11,7 +18,6 @@ test.beforeAll(async ({ authToken, createDoctorInfor, createSchedule }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
   doctorInfor = createDoctorInfor;
   schedules = createSchedule;
-  // console.log("check schedules: ", schedules);
 
   //create randomBookingInfor:
   bookingInfor = await createRandomBookingInfor();
@@ -24,6 +30,17 @@ test.beforeAll(async ({ authToken, createDoctorInfor, createSchedule }) => {
   bookingInfor.price = "fake data - price";
   bookingInfor.doctorName = "fake data - doctorName";
   console.log("check booking Infor: ", bookingInfor);
+});
+
+test.afterAll(async ({ request }) => {
+  //Teardown - delete schedule
+  await deleteSchedule(token, bookingInfor.doctorId!, bookingInfor.date!);
+
+  //Teardown - delete doctorInfor
+  await deleteDoctorInfor(token, bookingInfor.doctorId!);
+
+  //Teardown - delete doctor
+  await deleteUser(token, bookingInfor.doctorId!);
 });
 
 test("should fail to create without email", async ({ request }) => {
@@ -112,6 +129,12 @@ test("should create a new booking with a new patient successfully ", async ({
   expect(data.booking.timeType).toBe(bookingInfor.timeType);
   expect(data.patient_user.email).toBe(bookingInfor.email);
   expect(data.patient_user.firstName).toBe(bookingInfor.firstName);
+
+  //Teardown - delete patient
+  await deleteUser(token, data.patient_user.id);
+
+  //Teardown - delete booking
+  await deleteBooking(token, data.booking.id);
 });
 
 test("should create when exist patient and exist booking", async ({
@@ -143,6 +166,12 @@ test("should create when exist patient and exist booking", async ({
   expect(data_2.message).toEqual(
     "Paitent's already exist && The book is exist"
   );
+
+  //Teardown - delete patient
+  await deleteUser(token, patient.id);
+
+  //Teardown - delete booking
+  await deleteBooking(token, data_2.booking.id);
 });
 
 //Check email

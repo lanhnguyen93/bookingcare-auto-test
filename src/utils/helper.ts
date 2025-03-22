@@ -20,6 +20,19 @@ export async function createUser(token: string, role?: string) {
   return user;
 }
 
+export async function deleteUser(token: string, userId: string) {
+  const response = await axios.delete(
+    `${process.env.SERVER_URL}/api/delete-user`,
+    {
+      headers: { Authorization: token },
+      params: { id: userId },
+    }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete user");
+  }
+}
+
 export function createRandomUserInfor(role?: string) {
   let randomLastname = faker.person.lastName();
   let randomFirstname = faker.person.firstName();
@@ -141,6 +154,19 @@ export async function createRandomDoctorInfor() {
   return doctorInfor;
 }
 
+export async function deleteDoctorInfor(token: string, doctorId: string) {
+  const response = await axios.delete(
+    `${process.env.SERVER_URL}/api/delete-detail-info-doctor`,
+    {
+      headers: { Authorization: token },
+      params: { doctorId: doctorId },
+    }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete doctor infor");
+  }
+}
+
 export async function createRandomSchedule(doctorId: string, _date?: string) {
   let date: string = _date ? _date : getRandomDateWithin7Days();
   const timeTypes = await getAllcode("TIME");
@@ -153,6 +179,23 @@ export async function createRandomSchedule(doctorId: string, _date?: string) {
   }));
 
   return schedule;
+}
+
+export async function deleteSchedule(
+  token: string,
+  doctorId: string,
+  date: string
+) {
+  const response = await axios.delete(
+    `${process.env.SERVER_URL}/api/delete-schedules`,
+    {
+      headers: { Authorization: token },
+      data: { doctorId: doctorId, date: date },
+    }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete schedule");
+  }
 }
 
 export async function createRandomBookingInfor() {
@@ -168,6 +211,39 @@ export async function createRandomBookingInfor() {
     address: faker.location.city(),
   };
   return booking;
+}
+
+export async function createBooking(bookingInfor: Types.Booking) {
+  const response = await axios.post(
+    `${process.env.SERVER_URL}/api/patient-book-appointment`,
+    { data: bookingInfor }
+  );
+
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to create booking");
+  }
+}
+
+export async function verifyBooking(booking: any) {
+  const response = await axios.put(
+    `${process.env.SERVER_URL}/api/verify-book-appointment?token=${booking.token}&doctorId=${booking.doctorId}`
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to verify booking");
+  }
+}
+
+export async function deleteBooking(token: string, bookId: string) {
+  const response = await axios.delete(
+    `${process.env.SERVER_URL}/api/delete-book-appointment`,
+    {
+      headers: { Authorization: token },
+      params: { id: bookId },
+    }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete booking");
+  }
 }
 
 /**

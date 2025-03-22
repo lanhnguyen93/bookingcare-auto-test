@@ -2,6 +2,7 @@ import { test as base } from "@playwright/test";
 import { Page } from "../pages/basePage";
 import fs from "fs";
 import {
+  createRandomBookingInfor,
   createRandomDoctorInfor,
   createRandomSchedule,
   createUser,
@@ -12,8 +13,11 @@ type TestOptions = {
   createAdmin: any;
   createDoctor: any;
   createPatient: any;
+  deletePatient: void;
   createDoctorInfor: any;
   createSchedule: any;
+  createBooking: any;
+  verifyBooking: any;
   page: Page;
 };
 
@@ -92,19 +96,49 @@ export const test = base.extend<TestOptions>({
       throw new Error("Failed to create schedules");
     }
     use(data.schedules);
+  },
 
-    //teardown-fixture
-    // const deleteResponse = await request.delete(
-    //   `${process.env.SERVER_URL}/api/delete-schedules`,
-    //   {
-    //     headers: { Authorization: process.env.ACCESS_TOKEN! },
-    //     data: { doctorId: doctor.id, date: schedules[0].date },
-    //   }
-    // );
-    // let deleteData = await deleteResponse.json();
-    // if (response.status() !== 200 || deleteData.errCode !== 0) {
-    //   throw new Error("Failed to create schedules");
-    // }
+  createBooking: async (
+    { request, createDoctorInfor, createSchedule },
+    use
+  ) => {
+    const doctorInfor = createDoctorInfor;
+    const schedules = createSchedule;
+
+    //create randomBookingInfor:
+    let bookingInfor = await createRandomBookingInfor();
+    bookingInfor.doctorId = doctorInfor.doctorId;
+    bookingInfor.date = new Date(schedules[0].date).toISOString().split("T")[0];
+    bookingInfor.timeType =
+      schedules[Math.floor(Math.random() * schedules.length)].timeType;
+    //Fake data because these datas're handled in front end
+    bookingInfor.time = "fake data - time";
+    bookingInfor.price = "fake data - price";
+    bookingInfor.doctorName = "fake data - doctorName";
+
+    const response = await request.post(
+      `${process.env.SERVER_URL}/api/patient-book-appointment`,
+      { data: bookingInfor }
+    );
+
+    let data = await response.json();
+    if (response.status() !== 200 || data.errCode !== 0) {
+      throw new Error("Failed to create schedules");
+    }
+    use({ booking: data.booking, patient_user: data.patient_user });
+  },
+
+  verifyBooking: async ({ request, createBooking }, use) => {
+    const booking = createBooking.booking;
+    const response = await request.put(
+      `${process.env.SERVER_URL}/api/verify-book-appointment`,
+      { params: { token: booking.token, doctorId: booking.doctorId } }
+    );
+    let data = await response.json();
+    if (response.status() !== 200 || data.errCode !== 0) {
+      throw new Error("Failed to verify booking");
+    }
+    use(data.data);
   },
 
   page: async ({ page }, use) => {

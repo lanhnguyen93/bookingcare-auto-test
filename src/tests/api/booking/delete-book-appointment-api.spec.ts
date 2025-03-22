@@ -1,6 +1,5 @@
 import { test, expect } from "../../../fixtures/base-test";
 import {
-  deleteBooking,
   deleteDoctorInfor,
   deleteSchedule,
   deleteUser,
@@ -22,46 +21,41 @@ test.afterAll(async () => {
   await deleteDoctorInfor(token, booking.doctorId!);
   await deleteUser(token, booking.doctorId!);
   await deleteUser(token, booking.patientId!);
-  await deleteBooking(token, booking.id);
 });
 
 test("should fail to delete without id", async ({ request }) => {
-  const response = await request.get(
-    `${process.env.SERVER_URL}/api/get-book-appointment-by-doctor-id`,
+  const response = await request.delete(
+    `${process.env.SERVER_URL}/api/delete-book-appointment`,
     {
       headers: { Authorization: token },
-      params: { date: booking.date },
     }
   );
   let data = await response.json();
 
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
-  expect(data.message).toEqual("Missing required parameter: doctorId or date");
+  expect(data.message).toEqual("Missing required parameter");
 });
 
-test("should fail to get without date", async ({ request }) => {
-  const response = await request.get(
-    `${process.env.SERVER_URL}/api/get-book-appointment-by-doctor-id`,
+test("should fail to delete with invalid id", async ({ request }) => {
+  const response = await request.delete(
+    `${process.env.SERVER_URL}/api/delete-book-appointment`,
     {
       headers: { Authorization: token },
-      params: { doctorId: booking.doctorId },
+      params: { id: `invalid_id${booking.id}` },
     }
   );
   let data = await response.json();
-
   expect(response.status()).toEqual(200);
-  expect(data.errCode).toEqual(1);
-  expect(data.message).toEqual("Missing required parameter: doctorId or date");
+  expect(data.errCode).toEqual(2);
+  expect(data.message).toEqual("The booking is not exist!");
 });
 
-test("should fail to get booking without authorization", async ({
-  request,
-}) => {
-  const response = await request.get(
-    `${process.env.SERVER_URL}/api/get-book-appointment-by-doctor-id`,
+test("should fail to delete without authorization", async ({ request }) => {
+  const response = await request.delete(
+    `${process.env.SERVER_URL}/api/delete-book-appointment`,
     {
-      params: { doctorId: booking.doctorId, date: booking.date },
+      params: { id: booking.id },
     }
   );
   let data = await response.json();
@@ -70,14 +64,14 @@ test("should fail to get booking without authorization", async ({
   expect(data.message).toEqual("Authorization token is required.");
 });
 
-test("should fail to get booking with invalid authorization", async ({
+test("should fail to delete with invalid authorization", async ({
   request,
 }) => {
-  const response = await request.get(
-    `${process.env.SERVER_URL}/api/get-book-appointment-by-doctor-id`,
+  const response = await request.delete(
+    `${process.env.SERVER_URL}/api/delete-book-appointment`,
     {
       headers: { Authorization: `Token ${token}` },
-      params: { doctorId: booking.doctorId, date: booking.date },
+      params: { id: booking.id },
     }
   );
   let data = await response.json();
@@ -87,16 +81,16 @@ test("should fail to get booking with invalid authorization", async ({
   expect(data.message).toEqual("Failed to authenticate token.");
 });
 
-test("should get booking per day by id successfully", async ({ request }) => {
-  const response = await request.get(
-    `${process.env.SERVER_URL}/api/get-book-appointment-by-doctor-id`,
+test("should delete user successfully", async ({ request }) => {
+  const response = await request.delete(
+    `${process.env.SERVER_URL}/api/delete-book-appointment`,
     {
       headers: { Authorization: token },
-      params: { doctorId: booking.doctorId, date: booking.date },
+      params: { id: booking.id },
     }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(0);
-  expect(data).toHaveProperty("books");
+  expect(data).toHaveProperty("book");
 });
