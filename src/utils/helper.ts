@@ -276,7 +276,7 @@ export async function getAllSpecialties() {
   return data.specialties;
 }
 
-function randomValue(array: any[]) {
+export function randomValue(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
