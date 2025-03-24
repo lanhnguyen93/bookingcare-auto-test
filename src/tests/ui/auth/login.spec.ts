@@ -1,55 +1,67 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../../../fixtures/base-test";
 import { LoginPage } from "../../../pages/auth/loginPage";
 import { UserVuexPage } from "../../../pages/system/userVuexPage";
 import { NavigationBar } from "../../../pages/system/navigationBar";
+import { User } from "../../../utils/types";
+import { createUserByApi, deleteUserByApi } from "../../../utils/userHelper";
+import { ManageSchedulePage } from "../../../pages/system/manageSchedulePage";
+import { testLoginData } from "../../testData/loginData";
+
+let token: string;
+let adminUser: User;
+let doctorUser: User;
+let patientUser: User;
+
+test.beforeAll(async ({ authToken }) => {
+  token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
+  adminUser = await createUserByApi(token, "Admin");
+  doctorUser = await createUserByApi(token, "Doctor");
+  patientUser = await createUserByApi(token, "Patient");
+});
+
+test.afterAll(async () => {
+  await deleteUserByApi(token, adminUser.id);
+  await deleteUserByApi(token, doctorUser.id);
+  await deleteUserByApi(token, patientUser.id);
+});
 
 test.beforeEach(async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
 });
 
-test("Verify login successfully", async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.enterCredential(
-    process.env.USER_EMAIL!,
-    process.env.USER_PASSWORD!
-  );
-
-  const userVuexPage = new UserVuexPage(page);
-  await userVuexPage.waitForLoad();
-});
-
-test.describe("Login fail", () => {
-  test("Verify when missing email", async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.enterCredential("", testData.validPassword);
-    await expect(loginPage.errorMessage).toHaveText("Missing input parameter");
-  });
-
-  test("Verify when missing password", async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.enterCredential(testData.validEmail, "");
-    await expect(loginPage.errorMessage).toHaveText("Missing input parameter");
-  });
-
-  test("Verify when enter non-existen email", async ({ page }) => {
+test.describe("Login with each user type", () => {
+  test("Verify login successfully with admin user", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.enterCredential(
-      testData.invalidEmail,
-      testData.validPassword
+      adminUser.email,
+      process.env.CREATE_DATA_PASSWORD!
     );
-    await expect(loginPage.errorMessage).toHaveText("The email is not exits!");
+
+    const userVuexPage = new UserVuexPage(page);
+    await userVuexPage.waitForLoad();
   });
 
-  test("Verify when enter wrong password", async ({ page }) => {
+  test("Verify login successfully with doctor user", async ({ page }) => {
     const loginPage = new LoginPage(page);
-    await loginPage.goto();
     await loginPage.enterCredential(
-      testData.validEmail,
-      testData.invalidPassword
+      doctorUser.email,
+      process.env.CREATE_DATA_PASSWORD!
     );
+
+    const manageSchedulePage = new ManageSchedulePage(page);
+    await manageSchedulePage.waitForLoad();
+  });
+
+  test("Verify failt to login with patient user", async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.enterCredential(
+      patientUser.email,
+      process.env.CREATE_DATA_PASSWORD!
+    );
+
     await expect(loginPage.errorMessage).toHaveText(
-      "The password is not mapping!"
+      "This email can't login to the system"
     );
   });
 });
@@ -60,13 +72,19 @@ test("Redirect to login page when not logged in", async ({ page }) => {
   expect(page.url()).toContain(`/login?redirect=${userVuexPage.pageUrl}`);
 
   const loginPage = new LoginPage(page);
-  await loginPage.enterCredential(testData.validEmail, testData.validPassword);
+  await loginPage.enterCredential(
+    adminUser.email,
+    process.env.CREATE_DATA_PASSWORD!
+  );
   await userVuexPage.waitForLoad();
 });
 
 test("Verify stay logged in after login", async ({ page, context }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.enterCredential(testData.validEmail, testData.validPassword);
+  await loginPage.enterCredential(
+    adminUser.email,
+    process.env.CREATE_DATA_PASSWORD!
+  );
 
   const userVuexPage = new UserVuexPage(page);
   await userVuexPage.waitForLoad();
@@ -79,7 +97,10 @@ test("Verify stay logged in after login", async ({ page, context }) => {
 
 test("Should have welcome text in the navigation bar", async ({ page }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.enterCredential(testData.validEmail, testData.validPassword);
+  await loginPage.enterCredential(
+    adminUser.email,
+    process.env.CREATE_DATA_PASSWORD!
+  );
 
   const userVuexPage = new UserVuexPage(page);
   await userVuexPage.waitForLoad();
@@ -92,4 +113,15 @@ test("Should have welcome text in the navigation bar", async ({ page }) => {
   await expect(navigationBar.greetingText).toHaveText(
     `Xin chào,  ${userInfor.user.firstName} ${userInfor.user.lastName}`
   );
+});
+
+//Login fail
+testLoginData.forEach((data) => {
+  test(`Verify login fail with email: "${data.email}" and password: "${data.password}"`, async ({
+    page,
+  }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.enterCredential(data.email, data.password);
+    await expect(loginPage.errorMessage).toHaveText(data.message);
+  });
 });
