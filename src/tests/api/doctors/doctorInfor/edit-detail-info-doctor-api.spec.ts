@@ -3,7 +3,7 @@ import {
   createDoctorInforByApi,
   deleteDoctorInforByApi,
 } from "../../../../utils/doctorHelper";
-import { DoctorInfor } from "../../../../utils/types";
+import { DoctorInfor, User } from "../../../../utils/types";
 import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
 import {
   DoctorInforDataType,
@@ -12,7 +12,7 @@ import {
 
 let token: string;
 let doctorId: string;
-let doctor: any;
+let doctor: User;
 let doctorInfor: DoctorInfor;
 let doctorInforData: DoctorInforDataType;
 

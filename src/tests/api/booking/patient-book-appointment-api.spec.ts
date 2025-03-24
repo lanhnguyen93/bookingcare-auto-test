@@ -10,15 +10,15 @@ import {
   deleteDoctorInforByApi,
   deleteScheduleByApi,
 } from "../../../utils/doctorHelper";
-import { User } from "../../../utils/types";
+import { DoctorInfor, Schedule, User } from "../../../utils/types";
 import { createUserByApi, deleteUserByApi } from "../../../utils/userHelper";
 import { BookingDataType, randomBookingData } from "../../testData/bookingData";
 
 let token: string;
 let doctorId: string;
 let doctor: User;
-let doctorInfor: any;
-let schedules: any;
+let doctorInfor: DoctorInfor;
+let schedules: Schedule[];
 let date: string;
 let bookingData: BookingDataType;
 

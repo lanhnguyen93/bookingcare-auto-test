@@ -1,11 +1,14 @@
 import { test, expect } from "../../../../fixtures/base-test";
 import { deleteScheduleByApi } from "../../../../utils/doctorHelper";
 import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
-import { randomSchedulesData } from "../../../testData/schedulesData";
+import {
+  randomSchedulesData,
+  ScheduleDataType,
+} from "../../../testData/schedulesData";
 
 let token: string;
 let doctorId: string;
-let schedulesData: any;
+let schedulesData: ScheduleDataType[];
 
 test.beforeAll(async ({ authToken }) => {
   //get token, create a new doctor, create random schedule
@@ -41,7 +44,7 @@ test("should fail to create without schedule data", async ({ request }) => {
 test("should fail to create without authorization", async ({ request }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/bulk-create-schedules`,
-    schedulesData
+    { data: schedulesData }
   );
 
   let data = await response.json();

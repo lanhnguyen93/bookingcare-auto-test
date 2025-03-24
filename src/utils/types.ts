@@ -33,15 +33,24 @@ export type Clinic = {
 export type DoctorInfor = {
   id: string;
   doctorId: string;
-  priceId: any;
-  paymentId: any;
-  provinceId: any;
-  clinicId: any;
-  specialtyId: any;
+  priceId: string;
+  paymentId: string;
+  provinceId: string;
+  clinicId: string;
+  specialtyId: string;
   contentMarkdown: string;
   contentHTML: string;
   description: string;
   note: string;
+};
+
+export type Schedule = {
+  id: string;
+  currentNumber?: number;
+  maxNumber?: number;
+  date: Date;
+  timeType: string;
+  doctorId: string;
 };
 
 export type Booking = {

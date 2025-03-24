@@ -3,10 +3,11 @@ import {
   createDoctorInforByApi,
   deleteDoctorInforByApi,
 } from "../../../../utils/doctorHelper";
+import { DoctorInfor } from "../../../../utils/types";
 import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
 
 let token: string;
-let doctorInfor: any;
+let doctorInfor: DoctorInfor;
 
 //Get doctor infor from DoctorInfor table
 test.beforeAll(async ({ authToken }) => {

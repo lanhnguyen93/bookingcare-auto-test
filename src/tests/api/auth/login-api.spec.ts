@@ -1,11 +1,12 @@
 import { test, expect } from "../../../fixtures/base-test";
 import { api } from "../../../utils/api";
+import { User } from "../../../utils/types";
 import { createUserByApi, deleteUserByApi } from "../../../utils/userHelper";
 
 let token: string;
-let adminUser: any;
-let doctorUser: any;
-let patientUser: any;
+let adminUser: User;
+let doctorUser: User;
+let patientUser: User;
 
 test.beforeAll(async ({ authToken }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";

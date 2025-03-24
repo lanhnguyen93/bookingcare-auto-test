@@ -1,9 +1,10 @@
 import { test, expect } from "../../../../fixtures/base-test";
 import { createClinicByApi } from "../../../../utils/doctorHelper";
+import { Clinic } from "../../../../utils/types";
 
 let clinicId: string;
 let token: string;
-let clinic: any;
+let clinic: Clinic;
 
 test.beforeAll(async ({ authToken }) => {
   //get token, create a clinic

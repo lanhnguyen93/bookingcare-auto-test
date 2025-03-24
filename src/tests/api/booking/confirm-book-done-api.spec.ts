@@ -1,7 +1,7 @@
 import path from "path";
 import { test, expect } from "../../../fixtures/base-test";
 import { getBase64 } from "../../../utils/commonUtils";
-import { User } from "../../../utils/types";
+import { Booking, User } from "../../../utils/types";
 import { ConfirmBookingDataType } from "../../testData/bookingData";
 import { deleteBookingByApi } from "../../../utils/bookingHelper";
 import {
@@ -11,7 +11,7 @@ import {
 import { deleteUserByApi } from "../../../utils/userHelper";
 
 let token: string;
-let booking: any;
+let booking: Booking;
 let confirmBookingData: ConfirmBookingDataType;
 let patient: User;
 const imagePath = path.resolve(

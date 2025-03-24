@@ -1,11 +1,11 @@
 import { test, expect } from "../../../fixtures/base-test";
 import { deleteUserByApi } from "../../../utils/userHelper";
-import { randomUserData } from "../../testData/userData";
+import { randomUserData, UserDataType } from "../../testData/userData";
 
 let token: string;
 let userEmail: string;
 let userId: string;
-let userData: any;
+let userData: UserDataType;
 
 test.beforeAll(async ({ authToken, createAdmin }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
@@ -55,7 +55,7 @@ test("should fail to edit with invalid email", async ({ request }) => {
 test("should fail to edit without authorization", async ({ request }) => {
   const response = await request.put(
     `${process.env.SERVER_URL}/api/edit-user`,
-    userData
+    { data: userData }
   );
   let data = await response.json();
   expect(response.status()).toEqual(401);

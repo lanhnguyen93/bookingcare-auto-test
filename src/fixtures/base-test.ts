@@ -7,18 +7,18 @@ import { createDoctorInforByApi } from "../utils/doctorHelper";
 import { randomSchedulesData } from "../tests/testData/schedulesData";
 import { randomBookingData } from "../tests/testData/bookingData";
 import { convertDatetimeToString, randomValue } from "../utils/commonUtils";
+import { Booking, DoctorInfor, Schedule, User } from "../utils/types";
 
 type TestOptions = {
   authToken: string;
-  createAdmin: any;
-  createDoctor: any;
-  createPatient: any;
+  createAdmin: User;
+  createDoctor: User;
+  createPatient: User;
   deletePatient: void;
-  createDoctorInfor: any;
-  createSchedule: any;
-  createBooking: any;
-  verifyBooking: any;
-  confirmBookingDone: any;
+  createDoctorInfor: DoctorInfor;
+  createSchedule: Schedule[];
+  createBooking: { booking: Booking; patient_user: User };
+  verifyBooking: Booking;
   page: Page;
 };
 

@@ -1,11 +1,13 @@
 import { test, expect } from "../../../../fixtures/base-test";
+import { convertDatetimeToString } from "../../../../utils/commonUtils";
 import { createSchedulesByApi } from "../../../../utils/doctorHelper";
+import { Schedule } from "../../../../utils/types";
 import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
 
 let token: string;
 let doctorId: string;
 let date: string;
-let schedules: any;
+let schedules: Schedule[];
 
 test.beforeAll(async ({ authToken, request }) => {
   //get token, create a new doctor
@@ -15,7 +17,7 @@ test.beforeAll(async ({ authToken, request }) => {
 
   //create schedules for this doctor
   schedules = await createSchedulesByApi(token, doctorId);
-  date = schedules[0].date;
+  date = convertDatetimeToString(schedules[0].date);
   console.log(`check init data: doctorId = ${doctorId}, date = ${date}`);
 });
 

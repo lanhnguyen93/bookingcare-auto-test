@@ -1,20 +1,12 @@
 import { test, expect } from "../../../../fixtures/base-test";
-import {
-  createDoctorInforByApi,
-  deleteDoctorInforByApi,
-} from "../../../../utils/doctorHelper";
-import { DoctorInfor } from "../../../../utils/types";
+import { createDoctorInforByApi } from "../../../../utils/doctorHelper";
+import { DoctorInfor, User } from "../../../../utils/types";
 import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
-import {
-  DoctorInforDataType,
-  randomDoctorInforData,
-} from "../../../testData/doctorInforData";
 
 let token: string;
 let doctorId: string;
-let doctor: any;
+let doctor: User;
 let doctorInfor: DoctorInfor;
-let doctorInforData: DoctorInforDataType;
 
 test.beforeAll(async ({ authToken }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";

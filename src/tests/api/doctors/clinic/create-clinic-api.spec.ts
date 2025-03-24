@@ -1,9 +1,9 @@
 import { test, expect } from "../../../../fixtures/base-test";
 import { deleteClinicByApi } from "../../../../utils/doctorHelper";
-import { randomClinicData } from "../../../testData/clinicData";
+import { ClinicDataType, randomClinicData } from "../../../testData/clinicData";
 
 let token: string;
-let clinicData: any;
+let clinicData: ClinicDataType;
 
 test.beforeAll(async ({ authToken }) => {
   //get token, create clinic infor

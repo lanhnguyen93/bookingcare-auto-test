@@ -1,9 +1,9 @@
 import { test, expect } from "../../../../fixtures/base-test";
 import { deleteSpecialtyByApi } from "../../../../utils/doctorHelper";
-import { randomSpecialtyData } from "../../../testData/specialtyData";
+import { randomSpecialtyData, SpecialtyDataType } from "../../../testData/specialtyData";
 
 let token: string;
-let specialtyData: any;
+let specialtyData: SpecialtyDataType;
 
 test.beforeAll(async ({ authToken }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";

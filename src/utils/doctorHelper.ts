@@ -1,15 +1,9 @@
 import axios from "axios";
-import path from "path";
 import { api } from "./api";
 import { randomSpecialtyData } from "../tests/testData/specialtyData";
 import { randomClinicData } from "../tests/testData/clinicData";
 import { randomDoctorInforData } from "../tests/testData/doctorInforData";
 import { randomSchedulesData } from "../tests/testData/schedulesData";
-
-const _imagePath = path.resolve(
-  __dirname,
-  "../tests/api/testData/image-test.png"
-);
 
 export async function getAllSpecialtiesByApi() {
   const response = await axios.get(

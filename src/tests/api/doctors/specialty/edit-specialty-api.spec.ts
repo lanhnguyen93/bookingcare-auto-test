@@ -9,10 +9,11 @@ import {
   randomSpecialtyData,
   SpecialtyDataType,
 } from "../../../testData/specialtyData";
+import { Specialty } from "../../../../utils/types";
 
 const imagePath = path.resolve(__dirname, "../../../testData/image-test-2.png");
 let token: string;
-let specialty: any;
+let specialty: Specialty;
 let specialtyData: SpecialtyDataType;
 
 test.beforeAll(async ({ authToken }) => {
@@ -81,7 +82,7 @@ test("should fail to edit with invalid id", async ({ request }) => {
 test("should fail to edit without authorization", async ({ request }) => {
   const response = await request.put(
     `${process.env.SERVER_URL}/api/edit-specialty`,
-    specialty
+    { data: specialty }
   );
   let data = await response.json();
   expect(response.status()).toEqual(401);

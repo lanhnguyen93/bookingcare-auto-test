@@ -4,10 +4,11 @@ import {
   deleteDoctorInforByApi,
   deleteScheduleByApi,
 } from "../../../utils/doctorHelper";
+import { Booking } from "../../../utils/types";
 import { deleteUserByApi } from "../../../utils/userHelper";
 
 let token: string;
-let booking: any;
+let booking: Booking;
 
 test.beforeAll(async ({ authToken, createBooking }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";

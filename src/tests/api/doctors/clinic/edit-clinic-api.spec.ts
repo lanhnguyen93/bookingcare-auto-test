@@ -4,14 +4,14 @@ import {
   createClinicByApi,
   deleteClinicByApi,
 } from "../../../../utils/doctorHelper";
-import { randomClinicData } from "../../../testData/clinicData";
+import { ClinicDataType, randomClinicData } from "../../../testData/clinicData";
 import { Clinic } from "../../../../utils/types";
 import { convertBufferToBase64 } from "../../../../utils/commonUtils";
 
 const imagePath = path.resolve(__dirname, "../../../testData/image-test-2.png");
 let token: string;
 let clinic: Clinic;
-let clinicData: any;
+let clinicData: ClinicDataType;
 
 test.beforeAll(async ({ authToken }) => {
   //get token, create a new clinic, create clinicInfor to update

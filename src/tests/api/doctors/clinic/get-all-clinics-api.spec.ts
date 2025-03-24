@@ -3,9 +3,10 @@ import {
   createClinicByApi,
   deleteClinicByApi,
 } from "../../../../utils/doctorHelper";
+import { Clinic } from "../../../../utils/types";
 
 let token: string;
-let clinic: any;
+let clinic: Clinic;
 
 test("should get all clinics successfully", async ({ request }) => {
   const response = await request.get(
