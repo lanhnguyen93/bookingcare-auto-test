@@ -1,28 +1,26 @@
 import { test, expect } from "../../../fixtures/base-test";
+import { deleteBookingByApi } from "../../../utils/bookingHelper";
 import {
-  deleteBooking,
-  deleteDoctorInfor,
-  deleteSchedule,
-  deleteUser,
-} from "../../../utils/helper";
+  deleteDoctorInforByApi,
+  deleteScheduleByApi,
+} from "../../../utils/doctorHelper";
+import { deleteUserByApi } from "../../../utils/userHelper";
 
 let token: string;
 let booking: any;
 
 test.beforeAll(async ({ authToken, createBooking }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-
-  //create booking
-  booking = createBooking;
+  booking = createBooking.booking;
   console.log("check booking: ", booking);
 });
 
 test.afterAll(async () => {
-  await deleteBooking(token, booking.id);
-  await deleteSchedule(token, booking.doctorId!, booking.date!);
-  await deleteDoctorInfor(token, booking.doctorId!);
-  await deleteUser(token, booking.doctorId!);
-  await deleteUser(token, booking.patientId!);
+  await deleteScheduleByApi(token, booking.doctorId!, booking.date!);
+  await deleteDoctorInforByApi(token, booking.doctorId!);
+  await deleteUserByApi(token, booking.doctorId!);
+  await deleteUserByApi(token, booking.patientId!);
+  await deleteBookingByApi(token, booking.id);
 });
 
 test("should fail to verify without token", async ({ request }) => {

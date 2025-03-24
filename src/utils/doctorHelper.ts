@@ -1,0 +1,132 @@
+import axios from "axios";
+import path from "path";
+import { api } from "./api";
+import { randomSpecialtyData } from "../tests/testData/specialtyData";
+import { randomClinicData } from "../tests/testData/clinicData";
+import { randomDoctorInforData } from "../tests/testData/doctorInforData";
+import { randomSchedulesData } from "../tests/testData/schedulesData";
+
+const _imagePath = path.resolve(
+  __dirname,
+  "../tests/api/testData/image-test.png"
+);
+
+export async function getAllSpecialtiesByApi() {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-all-specialty`,
+    { params: { id: "ALL" } }
+  );
+  let data = response.data;
+  return data.specialties;
+}
+
+export async function createSpecialtyByApi(token: string) {
+  const specialtyInfor = randomSpecialtyData();
+  const response = await api.post(`/api/create-specialty`, specialtyInfor, {
+    headers: { Authorization: token },
+  });
+  let specialty = response.data.specialty;
+  return specialty;
+}
+
+export async function deleteSpecialtyByApi(token: string, specialtyId: string) {
+  const response = await api.delete(`/api/delete-specialty`, {
+    headers: { Authorization: token },
+    params: { id: specialtyId },
+  });
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete specialty");
+  }
+}
+
+export async function getAllClinicsByApi() {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-all-clinics`,
+    { params: { id: "ALL" } }
+  );
+  let data = response.data;
+  return data.clinics;
+}
+
+export async function createClinicByApi(token: string) {
+  const clinicInfor = await randomClinicData();
+  const response = await axios.post(
+    `${process.env.SERVER_URL}/api/create-clinic`,
+    clinicInfor,
+    { headers: { Authorization: token } }
+  );
+  let clinic = response.data.clinic;
+  return clinic;
+}
+
+export async function deleteClinicByApi(token: string, clinicId: string) {
+  const response = await api.delete(`/api/delete-clinic`, {
+    headers: { Authorization: token },
+    params: { id: clinicId },
+  });
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete specialty");
+  }
+}
+
+export async function createDoctorInforByApi(token: string, doctorId: string) {
+  const doctorInforData = await randomDoctorInforData(doctorId);
+  const response = await axios.post(
+    `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
+    doctorInforData,
+    { headers: { Authorization: token } }
+  );
+
+  let data = await response.data;
+  if (response.status !== 201 || data.errCode !== 0) {
+    throw new Error("Failed to create doctor infor");
+  }
+  return data.doctor;
+}
+
+export async function deleteDoctorInforByApi(token: string, doctorId: string) {
+  const response = await axios.delete(
+    `${process.env.SERVER_URL}/api/delete-detail-info-doctor`,
+    {
+      headers: { Authorization: token },
+      params: { doctorId: doctorId },
+    }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete doctor infor");
+  }
+}
+
+export async function createSchedulesByApi(
+  token: string,
+  doctorId: string,
+  date?: string
+) {
+  const schedulesData = await randomSchedulesData(doctorId, date);
+  const response = await axios.post(
+    `${process.env.SERVER_URL}/api/bulk-create-schedules`,
+    schedulesData,
+    { headers: { Authorization: token } }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete schedule");
+  }
+  return response.data.schedules;
+}
+
+export async function deleteScheduleByApi(
+  token: string,
+  doctorId: string,
+  date: string
+) {
+  const response = await axios.delete(
+    `${process.env.SERVER_URL}/api/delete-schedules`,
+    {
+      headers: { Authorization: token },
+      data: { doctorId: doctorId, date: date },
+    }
+  );
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to delete schedule");
+  }
+}

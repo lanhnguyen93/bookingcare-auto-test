@@ -8,7 +8,8 @@ node_modules/
 
 .auth/user.json
 
-/src/tests/api/testData/createUser.json
-/src/tests/api/testData/randomUser.json
+/src/tests/testData/createUser.json
+/src/tests/testData/randomUser.json
+/src/tests/checkly.spec.ts
 
 .env

@@ -1,7 +1,0 @@
-{
-  "validEmail": "admin@test.com",
-  "invalidEmail": "invalid_email@gmail.com",
-  "validPassword": "123456",
-  "invalidPassword": "invalid_password",
-  "userWithoutPassword": "lanh.thp@gmail.com"
-}

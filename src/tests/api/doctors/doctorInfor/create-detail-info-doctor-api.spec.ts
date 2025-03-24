@@ -1,54 +1,38 @@
-import { test, expect } from "../../../fixtures/base-test-api";
-import { createRandomDoctorInfor, createUser } from "../../../utils/helper";
+import { test, expect } from "../../../../fixtures/base-test";
+import { deleteDoctorInforByApi } from "../../../../utils/doctorHelper";
+import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
+import {
+  DoctorInforDataType,
+  randomDoctorInforData,
+} from "../../../testData/doctorInforData";
 
 let token: string;
 let doctorId: string;
-let doctorInfor: any;
+let doctorInforData: DoctorInforDataType;
 
 test.beforeAll(async ({ authToken }) => {
   //get token, create a new user, doctorInfor
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  let user = await createUser(token, "Doctor");
+  let user = await createUserByApi(token, "Doctor");
   console.log(
     `check create user: email = ${user.email}, userId-doctorId - ${user.id}`
   );
   doctorId = user.id;
-  doctorInfor = await createRandomDoctorInfor();
-  doctorInfor.doctorId = doctorId;
+  doctorInforData = await randomDoctorInforData(doctorId);
 });
 
-test.afterAll(async ({ request }) => {
-  //Teardown - delete user after creating
-  const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    {
-      headers: { Authorization: token },
-      params: { id: doctorId },
-    }
-  );
-  const data = await response.json();
-  if (response.status() !== 200 || data.errCode !== 0) {
-    throw new Error("Fail to delete user");
-  }
+test.afterAll(async () => {
+  await deleteUserByApi(token, doctorId);
 });
 
 test("should fail to create without doctorId", async ({ request }) => {
+  let reDoctorInforData = JSON.parse(JSON.stringify(doctorInforData));
+  reDoctorInforData.doctorId = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: token },
-      data: {
-        // doctorId: doctorInfor.doctorId,
-        priceId: doctorInfor.priceId,
-        paymentId: doctorInfor.paymentId,
-        provinceId: doctorInfor.provinceId,
-        clinicId: doctorInfor.clinicId,
-        specialtyId: doctorInfor.specialtyId,
-        contentHTML: doctorInfor.contentHTML,
-        contentMarkdown: doctorInfor.contentMarkdown,
-        description: doctorInfor.description,
-        note: doctorInfor.note,
-      },
+      data: reDoctorInforData,
     }
   );
 
@@ -62,22 +46,13 @@ test("should fail to create without doctorId", async ({ request }) => {
 });
 
 test("should fail to create without description", async ({ request }) => {
+  let reDoctorInforData = JSON.parse(JSON.stringify(doctorInforData));
+  reDoctorInforData.description = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: token },
-      data: {
-        doctorId: doctorInfor.doctorId,
-        priceId: doctorInfor.priceId,
-        paymentId: doctorInfor.paymentId,
-        provinceId: doctorInfor.provinceId,
-        clinicId: doctorInfor.clinicId,
-        specialtyId: doctorInfor.specialtyId,
-        contentHTML: doctorInfor.contentHTML,
-        contentMarkdown: doctorInfor.contentMarkdown,
-        // description: doctorInfor.description,
-        note: doctorInfor.note,
-      },
+      data: reDoctorInforData,
     }
   );
 
@@ -91,22 +66,13 @@ test("should fail to create without description", async ({ request }) => {
 });
 
 test("should fail to create without contentHTML", async ({ request }) => {
+  let reDoctorInforData = JSON.parse(JSON.stringify(doctorInforData));
+  reDoctorInforData.contentHTML = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: token },
-      data: {
-        doctorId: doctorInfor.doctorId,
-        priceId: doctorInfor.priceId,
-        paymentId: doctorInfor.paymentId,
-        provinceId: doctorInfor.provinceId,
-        clinicId: doctorInfor.clinicId,
-        specialtyId: doctorInfor.specialtyId,
-        // contentHTML: doctorInfor.contentHTML,
-        contentMarkdown: doctorInfor.contentMarkdown,
-        description: doctorInfor.description,
-        note: doctorInfor.note,
-      },
+      data: reDoctorInforData,
     }
   );
 
@@ -120,22 +86,13 @@ test("should fail to create without contentHTML", async ({ request }) => {
 });
 
 test("should fail to create without contentMarkdown", async ({ request }) => {
+  let reDoctorInforData = JSON.parse(JSON.stringify(doctorInforData));
+  reDoctorInforData.contentMarkdown = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: token },
-      data: {
-        doctorId: doctorInfor.doctorId,
-        priceId: doctorInfor.priceId,
-        paymentId: doctorInfor.paymentId,
-        provinceId: doctorInfor.provinceId,
-        clinicId: doctorInfor.clinicId,
-        specialtyId: doctorInfor.specialtyId,
-        contentHTML: doctorInfor.contentHTML,
-        // contentMarkdown: doctorInfor.contentMarkdown,
-        description: doctorInfor.description,
-        note: doctorInfor.note,
-      },
+      data: reDoctorInforData,
     }
   );
 
@@ -153,7 +110,7 @@ test("should fail to create a user without authorization", async ({
 }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
-    doctorInfor
+    { data: doctorInforData }
   );
 
   let data = await response.json();
@@ -170,7 +127,7 @@ test("should fail to create a user with invalid authorization", async ({
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: `Token ${token}` },
-      data: doctorInfor,
+      data: doctorInforData,
     }
   );
 
@@ -186,7 +143,7 @@ test("should create detail infor doctor successfully", async ({ request }) => {
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: token },
-      data: doctorInfor,
+      data: doctorInforData,
     }
   );
 
@@ -200,7 +157,7 @@ test("should create detail infor doctor successfully", async ({ request }) => {
     `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
     {
       headers: { Authorization: token },
-      data: doctorInfor,
+      data: doctorInforData,
     }
   );
 
@@ -210,5 +167,5 @@ test("should create detail infor doctor successfully", async ({ request }) => {
   expect(data_2.message).toEqual("The doctor already exists!");
 
   //Teardown - delete doctor infor after creating
-  //Todo
+  await deleteDoctorInforByApi(token, data_1.doctor.doctorId);
 });

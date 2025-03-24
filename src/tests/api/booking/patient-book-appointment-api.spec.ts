@@ -1,109 +1,112 @@
-import { da } from "@faker-js/faker";
 import { test, expect } from "../../../fixtures/base-test";
+import { deleteBookingByApi } from "../../../utils/bookingHelper";
 import {
-  createRandomBookingInfor,
-  deleteBooking,
-  deleteDoctorInfor,
-  deleteSchedule,
-  deleteUser,
-} from "../../../utils/helper";
-import * as Types from "../../../utils/typesBase";
+  convertDatetimeToString,
+  randomValue,
+} from "../../../utils/commonUtils";
+import {
+  createDoctorInforByApi,
+  createSchedulesByApi,
+  deleteDoctorInforByApi,
+  deleteScheduleByApi,
+} from "../../../utils/doctorHelper";
+import { User } from "../../../utils/types";
+import { createUserByApi, deleteUserByApi } from "../../../utils/userHelper";
+import { BookingDataType, randomBookingData } from "../../testData/bookingData";
 
 let token: string;
+let doctorId: string;
+let doctor: User;
 let doctorInfor: any;
 let schedules: any;
-let bookingInfor: Types.Booking;
+let date: string;
+let bookingData: BookingDataType;
 
-test.beforeAll(async ({ authToken, createDoctorInfor, createSchedule }) => {
+test.beforeAll(async ({ authToken }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  doctorInfor = createDoctorInfor;
-  schedules = createSchedule;
+  doctor = await createUserByApi(token, "Doctor");
+  doctorId = doctor.id;
+  doctorInfor = await createDoctorInforByApi(token, doctorId);
+  schedules = await createSchedulesByApi(token, doctorId);
+  date = convertDatetimeToString(schedules[0].date);
+  console.log("check date: ", date);
 
   //create randomBookingInfor:
-  bookingInfor = await createRandomBookingInfor();
-  bookingInfor.doctorId = doctorInfor.doctorId;
-  bookingInfor.date = new Date(schedules[0].date).toISOString().split("T")[0];
-  bookingInfor.timeType =
-    schedules[Math.floor(Math.random() * schedules.length)].timeType;
-  //Fake data because these datas're handled in front end
-  bookingInfor.time = "fake data - time";
-  bookingInfor.price = "fake data - price";
-  bookingInfor.doctorName = "fake data - doctorName";
-  console.log("check booking Infor: ", bookingInfor);
+  bookingData = await randomBookingData(
+    doctorId,
+    date,
+    randomValue(schedules).timeType
+  );
+  console.log("check booking data: ", bookingData);
 });
 
 test.afterAll(async ({ request }) => {
-  //Teardown - delete schedule
-  await deleteSchedule(token, bookingInfor.doctorId!, bookingInfor.date!);
-
-  //Teardown - delete doctorInfor
-  await deleteDoctorInfor(token, bookingInfor.doctorId!);
-
-  //Teardown - delete doctor
-  await deleteUser(token, bookingInfor.doctorId!);
+  await deleteScheduleByApi(token, doctorId!, date!);
+  await deleteDoctorInforByApi(token, doctorId!);
+  await deleteUserByApi(token, doctorId!);
 });
 
 test("should fail to create without email", async ({ request }) => {
-  let re_bookInfor = JSON.parse(JSON.stringify(bookingInfor));
-  re_bookInfor.email = "";
+  let reBookingData = JSON.parse(JSON.stringify(bookingData));
+  reBookingData.email = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: re_bookInfor }
+    { data: reBookingData }
   );
 
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual(
-    "Missing require parameter: patitent-id, doctorId, date, timeType"
+    "Missing require parameter: patitent-email, doctorId, date, timeType"
   );
 });
 
 test("should fail to create without doctorId", async ({ request }) => {
-  let re_bookInfor = JSON.parse(JSON.stringify(bookingInfor));
-  re_bookInfor.doctorId = "";
+  let reBookingData = JSON.parse(JSON.stringify(bookingData));
+  reBookingData.doctorId = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: re_bookInfor }
+    { data: reBookingData }
   );
 
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual(
-    "Missing require parameter: patitent-id, doctorId, date, timeType"
+    "Missing require parameter: patitent-email, doctorId, date, timeType"
   );
 });
 
 test("should fail to create without date", async ({ request }) => {
-  let re_bookInfor = JSON.parse(JSON.stringify(bookingInfor));
-  re_bookInfor.date = "";
+  let reBookingData = JSON.parse(JSON.stringify(bookingData));
+  reBookingData.date = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: re_bookInfor }
+    { data: reBookingData }
   );
 
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual(
-    "Missing require parameter: patitent-id, doctorId, date, timeType"
+    "Missing require parameter: patitent-email, doctorId, date, timeType"
   );
 });
 
 test("should fail to create without timeType", async ({ request }) => {
-  let re_bookInfor = JSON.parse(JSON.stringify(bookingInfor));
-  re_bookInfor.timeType = "";
+  let reBookingData = JSON.parse(JSON.stringify(bookingData));
+  reBookingData.timeType = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: re_bookInfor }
+    { data: reBookingData }
   );
 
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual(
-    "Missing require parameter: patitent-id, doctorId, date, timeType"
+    "Missing require parameter: patitent-email, doctorId, date, timeType"
   );
 });
 
@@ -112,10 +115,11 @@ test("should create a new booking with a new patient successfully ", async ({
 }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: bookingInfor }
+    { data: bookingData }
   );
 
   let data = await response.json();
+  console.log("check data: ", data);
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(0);
   expect(data.message).toEqual(
@@ -124,29 +128,26 @@ test("should create a new booking with a new patient successfully ", async ({
   expect(data).toHaveProperty("booking");
   expect(data.booking).toHaveProperty("token");
   expect(data).toHaveProperty("patient_user");
-  expect(data.booking.doctorId).toBe(bookingInfor.doctorId);
-  expect(data.booking.date).toBe(bookingInfor.date);
-  expect(data.booking.timeType).toBe(bookingInfor.timeType);
-  expect(data.patient_user.email).toBe(bookingInfor.email);
-  expect(data.patient_user.firstName).toBe(bookingInfor.firstName);
+  expect(data.booking.doctorId).toBe(bookingData.doctorId);
+  expect(data.booking.date).toBe(bookingData.date);
+  expect(data.booking.timeType).toBe(bookingData.timeType);
+  expect(data.patient_user.email).toBe(bookingData.email);
+  expect(data.patient_user.firstName).toBe(bookingData.firstName);
 
-  //Teardown - delete patient
-  await deleteUser(token, data.patient_user.id);
-
-  //Teardown - delete booking
-  await deleteBooking(token, data.booking.id);
+  //Teardown - delete patient, booking
+  await deleteUserByApi(token, data.patient_user.id);
+  await deleteBookingByApi(token, data.booking.id);
 });
 
 test("should create when exist patient and exist booking", async ({
   request,
-  createPatient,
 }) => {
   //Create a patient before booking
-  const patient = createPatient;
-  bookingInfor.email = patient.email;
+  const patient = await createUserByApi(token, "Patient");
+  bookingData.email = patient.email;
   const response_1 = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: bookingInfor }
+    { data: bookingData }
   );
   let data_1 = await response_1.json();
   expect(response_1.status()).toEqual(200);
@@ -158,7 +159,7 @@ test("should create when exist patient and exist booking", async ({
   //Re-create booking
   const response_2 = await request.post(
     `${process.env.SERVER_URL}/api/patient-book-appointment`,
-    { data: bookingInfor }
+    { data: bookingData }
   );
   let data_2 = await response_2.json();
   expect(response_2.status()).toEqual(200);
@@ -167,11 +168,9 @@ test("should create when exist patient and exist booking", async ({
     "Paitent's already exist && The book is exist"
   );
 
-  //Teardown - delete patient
-  await deleteUser(token, patient.id);
-
-  //Teardown - delete booking
-  await deleteBooking(token, data_2.booking.id);
+  //Teardown - delete patient, booking
+  await deleteUserByApi(token, patient.id);
+  await deleteBookingByApi(token, data_2.booking.id);
 });
 
 //Check email

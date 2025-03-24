@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { randomValue } from "../../utils/helper";
+import { randomValue } from "../../utils/commonUtils";
 
 test("should fail to get with invalid type", async ({ request }) => {
   const response = await request.get(`${process.env.SERVER_URL}/api/allcode`, {

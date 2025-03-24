@@ -1,20 +1,22 @@
-import { test, expect } from "../../../fixtures/base-test";
+import { test, expect } from "../../../../fixtures/base-test";
+import { createClinicByApi } from "../../../../utils/doctorHelper";
 
+let clinicId: string;
 let token: string;
-let userId: string;
+let clinic: any;
 
-test.beforeAll(async ({ authToken, createAdmin }) => {
+test.beforeAll(async ({ authToken }) => {
+  //get token, create a clinic
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  userId = createAdmin.id;
-  console.log("check userId: ", userId);
+  clinic = await createClinicByApi(token);
+  clinicId = clinic.id!;
+  console.log("check clinic id: ", clinicId);
 });
 
 test("should fail to delete without id", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    {
-      headers: { Authorization: token },
-    }
+    `${process.env.SERVER_URL}/api/delete-clinic`,
+    { headers: { Authorization: token } }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
@@ -24,22 +26,22 @@ test("should fail to delete without id", async ({ request }) => {
 
 test("should fail to delete with invalid id", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
+    `${process.env.SERVER_URL}/api/delete-clinic`,
     {
       headers: { Authorization: token },
-      params: { id: `invalid_id${userId}` },
+      params: { id: `invalid_id${clinicId}` },
     }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
-  expect(data.message).toEqual("The user is not exist!");
+  expect(data.message).toEqual("The clinic is not exist!");
 });
 
 test("should fail to delete without authorization", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    { params: { id: userId } }
+    `${process.env.SERVER_URL}/api/delete-clinic`,
+    { params: { id: clinicId } }
   );
   let data = await response.json();
   expect(response.status()).toEqual(401);
@@ -51,10 +53,10 @@ test("should fail to delete with invalid authorization", async ({
   request,
 }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
+    `${process.env.SERVER_URL}/api/delete-clinic`,
     {
       headers: { Authorization: `Token ${token}` },
-      params: { id: userId },
+      params: { id: clinicId },
     }
   );
   let data = await response.json();
@@ -64,16 +66,16 @@ test("should fail to delete with invalid authorization", async ({
   expect(data.message).toEqual("Failed to authenticate token.");
 });
 
-test("should delete user successfully", async ({ request }) => {
+test("should delete clinic successfully", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
+    `${process.env.SERVER_URL}/api/delete-clinic`,
     {
       headers: { Authorization: token },
-      params: { id: userId },
+      params: { id: clinicId },
     }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(0);
-  expect(data).toHaveProperty("user");
+  expect(data).toHaveProperty("clinic");
 });

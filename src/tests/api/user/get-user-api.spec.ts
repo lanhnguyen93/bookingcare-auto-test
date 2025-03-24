@@ -1,5 +1,5 @@
-import { test, expect } from "../../../fixtures/base-test-api";
-import user from "../../../../.auth/user.json";
+import { test, expect } from "../../../fixtures/base-test";
+import { deleteUserByApi } from "../../../utils/userHelper";
 
 test("should get all users successfully", async ({ request }) => {
   const token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
@@ -19,9 +19,12 @@ test("should get all users successfully", async ({ request }) => {
   expect(data.users[0]).not.toHaveProperty("password");
 });
 
-test("should get user by id successfully", async ({ request }) => {
+test("should get user by id successfully", async ({ request, createAdmin }) => {
   const token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  let userId = user.userInfor.id;
+
+  //create a new user to ensure have exist user.id
+  let user = createAdmin;
+  let userId = user.id;
   const response = await request.get(
     `${process.env.SERVER_URL}/api/get-all-users`,
     {
@@ -34,6 +37,9 @@ test("should get user by id successfully", async ({ request }) => {
   expect(response.status()).toEqual(200);
   expect(data.users.id).toEqual(userId);
   expect(data.users).not.toHaveProperty("password");
+
+  //teardown - delete user
+  await deleteUserByApi(token, userId);
 });
 
 test("should fail to get users without id", async ({ request }) => {

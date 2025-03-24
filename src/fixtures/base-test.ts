@@ -1,12 +1,12 @@
 import { test as base } from "@playwright/test";
 import { Page } from "../pages/basePage";
 import fs from "fs";
-import {
-  createRandomBookingInfor,
-  createRandomDoctorInfor,
-  createRandomSchedule,
-  createUser,
-} from "../utils/helper";
+import { api } from "../utils/api";
+import { createUserByApi } from "../utils/userHelper";
+import { createDoctorInforByApi } from "../utils/doctorHelper";
+import { randomSchedulesData } from "../tests/testData/schedulesData";
+import { randomBookingData } from "../tests/testData/bookingData";
+import { convertDatetimeToString, randomValue } from "../utils/commonUtils";
 
 type TestOptions = {
   authToken: string;
@@ -18,6 +18,7 @@ type TestOptions = {
   createSchedule: any;
   createBooking: any;
   verifyBooking: any;
+  confirmBookingDone: any;
   page: Page;
 };
 
@@ -25,18 +26,14 @@ const authFile = ".auth/user.json";
 
 export const test = base.extend<TestOptions>({
   authToken: [
-    async ({ request }, use) => {
-      const response = await request.post(
-        `${process.env.SERVER_URL}/api/login`,
-        {
-          data: {
-            email: process.env.USER_EMAIL,
-            password: process.env.USER_PASSWORD,
-          },
-        }
-      );
-      let data = await response.json();
-      if (response.status() !== 200 || !data.token) {
+    async ({}, use) => {
+      const response = await api.post("/api/login", {
+        email: process.env.USER_EMAIL,
+        password: process.env.USER_PASSWORD,
+      });
+
+      let data = await response.data;
+      if (response.status !== 200 || !data.token) {
         throw new Error("Failed to login and get token");
       }
       fs.writeFileSync(authFile, JSON.stringify(data));
@@ -47,43 +44,34 @@ export const test = base.extend<TestOptions>({
   ],
 
   createAdmin: async ({}, use) => {
-    const admin = await createUser(process.env.ACCESS_TOKEN!, "admin");
+    const admin = await createUserByApi(process.env.ACCESS_TOKEN!, "Admin");
     use(admin);
   },
 
   createDoctor: async ({}, use) => {
-    const doctor = await createUser(process.env.ACCESS_TOKEN!, "doctor");
+    const doctor = await createUserByApi(process.env.ACCESS_TOKEN!, "Doctor");
     use(doctor);
   },
 
   createPatient: async ({}, use) => {
-    const patient = await createUser(process.env.ACCESS_TOKEN!, "patient");
+    const patient = await createUserByApi(process.env.ACCESS_TOKEN!, "Patient");
     use(patient);
   },
 
-  createDoctorInfor: async ({ request, createDoctor }, use) => {
+  createDoctorInfor: async ({ createDoctor }, use) => {
     const doctor = createDoctor;
-    const doctorInfor = await createRandomDoctorInfor();
-    doctorInfor.doctorId = doctor.id;
-    const response = await request.post(
-      `${process.env.SERVER_URL}/api/create-detail-info-doctor`,
-      {
-        headers: { Authorization: process.env.ACCESS_TOKEN! },
-        data: doctorInfor,
-      }
+    const doctorInfor = await createDoctorInforByApi(
+      process.env.ACCESS_TOKEN!,
+      doctor.id
     );
 
-    let data = await response.json();
-    if (response.status() !== 201 || data.errCode !== 0) {
-      throw new Error("Failed to create doctor infor");
-    }
-    use(data.doctor);
+    use(doctorInfor);
   },
 
   createSchedule: async ({ request, createDoctor }, use) => {
     //setup fixture
     const doctor = createDoctor;
-    const schedules = await createRandomSchedule(doctor.id);
+    const schedules = await randomSchedulesData(doctor.id);
     const response = await request.post(
       `${process.env.SERVER_URL}/api/bulk-create-schedules`,
       {
@@ -104,21 +92,18 @@ export const test = base.extend<TestOptions>({
   ) => {
     const doctorInfor = createDoctorInfor;
     const schedules = createSchedule;
+    const date = convertDatetimeToString(schedules[0].date);
+    const timeType = randomValue(schedules).timeType;
 
     //create randomBookingInfor:
-    let bookingInfor = await createRandomBookingInfor();
-    bookingInfor.doctorId = doctorInfor.doctorId;
-    bookingInfor.date = new Date(schedules[0].date).toISOString().split("T")[0];
-    bookingInfor.timeType =
-      schedules[Math.floor(Math.random() * schedules.length)].timeType;
-    //Fake data because these datas're handled in front end
-    bookingInfor.time = "fake data - time";
-    bookingInfor.price = "fake data - price";
-    bookingInfor.doctorName = "fake data - doctorName";
-
+    let bookingData = await randomBookingData(
+      doctorInfor.doctorId,
+      date,
+      timeType
+    );
     const response = await request.post(
       `${process.env.SERVER_URL}/api/patient-book-appointment`,
-      { data: bookingInfor }
+      { data: bookingData }
     );
 
     let data = await response.json();

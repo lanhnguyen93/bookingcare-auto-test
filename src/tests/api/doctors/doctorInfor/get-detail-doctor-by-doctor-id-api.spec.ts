@@ -1,21 +1,26 @@
-import { test, expect } from "../../../fixtures/base-test";
-import { deleteDoctorInfor, deleteUser } from "../../../utils/helper";
+import { test, expect } from "../../../../fixtures/base-test";
+import {
+  createDoctorInforByApi,
+  deleteDoctorInforByApi,
+} from "../../../../utils/doctorHelper";
+import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
 
 let token: string;
 let doctorInfor: any;
 
 //Get doctor infor from DoctorInfor table
-test.beforeAll(async ({ authToken, createDoctorInfor }) => {
+test.beforeAll(async ({ authToken }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
 
-  //create booking
-  doctorInfor = createDoctorInfor;
+  //create doctor infor
+  const doctor = await createUserByApi(token, "Doctor");
+  doctorInfor = await createDoctorInforByApi(token, doctor.id);
   console.log("check doctorInfor: ", doctorInfor);
 });
 
 test.afterAll(async () => {
-  await deleteDoctorInfor(token, doctorInfor.doctorId!);
-  await deleteUser(token, doctorInfor.doctorId!);
+  await deleteDoctorInforByApi(token, doctorInfor.doctorId!);
+  await deleteUserByApi(token, doctorInfor.doctorId!);
 });
 
 test("should fail to get without id", async ({ request }) => {

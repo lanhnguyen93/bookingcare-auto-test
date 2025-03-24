@@ -1,6 +1,9 @@
-import { da } from "@faker-js/faker";
-import { test, expect } from "../../../fixtures/base-test-api";
-import { createRandomSchedule, createUser } from "../../../utils/helper";
+import { test, expect } from "../../../../fixtures/base-test";
+import {
+  createSchedulesByApi,
+  deleteScheduleByApi,
+} from "../../../../utils/doctorHelper";
+import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
 
 let token: string;
 let doctorId: string;
@@ -8,57 +11,20 @@ let date: string;
 let schedules: any;
 
 test.beforeAll(async ({ authToken, request }) => {
-  //get token, create a new doctor, create schedules
-  //get token
+  //get token, create a new doctor
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  let user = await createUser(token, "Doctor");
+  let user = await createUserByApi(token, "Doctor");
   doctorId = user.id;
 
   //create schedules for this doctor
-  const schedulesInfor = await createRandomSchedule(doctorId);
-  date = schedulesInfor[0].date;
-  const response = await request.post(
-    `${process.env.SERVER_URL}/api/bulk-create-schedules`,
-    {
-      headers: { Authorization: token },
-      data: schedulesInfor,
-    }
-  );
-
-  let data = await response.json();
-  if (response.status() !== 200 || data.errCode !== 0) {
-    throw new Error("Fail to create schedules");
-  }
-  schedules = data.schedules;
+  schedules = await createSchedulesByApi(token, doctorId);
+  date = schedules[0].date;
   console.log(`check init data: doctorId = ${doctorId}, date = ${date}`);
 });
 
-test.afterAll(async ({ request }) => {
-  //Teardown - delete user after creating
-  const response_1 = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    {
-      headers: { Authorization: token },
-      params: { id: doctorId },
-    }
-  );
-  const data_1 = await response_1.json();
-  if (response_1.status() !== 200 || data_1.errCode !== 0) {
-    throw new Error("Fail to delete user");
-  }
-
-  //Teardown - schedules user after creating
-  const response_2 = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-schedules`,
-    {
-      headers: { Authorization: token },
-      data: { doctorId: doctorId, date: date },
-    }
-  );
-  let data_2 = await response_2.json();
-  if (response_2.status() !== 200 || data_2.errCode !== 0) {
-    throw new Error("Fail to delete schedules");
-  }
+test.afterAll(async () => {
+  await deleteUserByApi(token, doctorId);
+  await deleteScheduleByApi(token, doctorId, date);
 });
 
 test("should fail to get without doctorId", async ({ request }) => {

@@ -1,20 +1,20 @@
-import { test, expect } from "../../../fixtures/base-test";
+import { test, expect } from "../../../../fixtures/base-test";
+import { createSpecialtyByApi } from "../../../../utils/doctorHelper";
 
+let specialtyId: string;
 let token: string;
-let userId: string;
 
-test.beforeAll(async ({ authToken, createAdmin }) => {
+test.beforeAll(async ({ authToken }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  userId = createAdmin.id;
-  console.log("check userId: ", userId);
+  let specialty = await createSpecialtyByApi(token);
+  specialtyId = specialty.id!;
+  console.log("check specialty id: ", specialtyId);
 });
 
 test("should fail to delete without id", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    {
-      headers: { Authorization: token },
-    }
+    `${process.env.SERVER_URL}/api/delete-specialty`,
+    { headers: { Authorization: token } }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
@@ -24,22 +24,22 @@ test("should fail to delete without id", async ({ request }) => {
 
 test("should fail to delete with invalid id", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
+    `${process.env.SERVER_URL}/api/delete-specialty`,
     {
       headers: { Authorization: token },
-      params: { id: `invalid_id${userId}` },
+      params: { id: `invalid_id${specialtyId}` },
     }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
-  expect(data.message).toEqual("The user is not exist!");
+  expect(data.message).toEqual("The specialty is not exist!");
 });
 
 test("should fail to delete without authorization", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    { params: { id: userId } }
+    `${process.env.SERVER_URL}/api/delete-specialty`,
+    { params: { id: specialtyId } }
   );
   let data = await response.json();
   expect(response.status()).toEqual(401);
@@ -51,10 +51,10 @@ test("should fail to delete with invalid authorization", async ({
   request,
 }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
+    `${process.env.SERVER_URL}/api/delete-specialty`,
     {
       headers: { Authorization: `Token ${token}` },
-      params: { id: userId },
+      params: { id: specialtyId },
     }
   );
   let data = await response.json();
@@ -64,16 +64,16 @@ test("should fail to delete with invalid authorization", async ({
   expect(data.message).toEqual("Failed to authenticate token.");
 });
 
-test("should delete user successfully", async ({ request }) => {
+test("should delete specialty successfully", async ({ request }) => {
   const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
+    `${process.env.SERVER_URL}/api/delete-specialty`,
     {
       headers: { Authorization: token },
-      params: { id: userId },
+      params: { id: specialtyId },
     }
   );
   let data = await response.json();
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(0);
-  expect(data).toHaveProperty("user");
+  expect(data).toHaveProperty("specialty");
 });

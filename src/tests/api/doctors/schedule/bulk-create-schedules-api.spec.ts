@@ -1,43 +1,32 @@
-import { test, expect } from "../../../fixtures/base-test-api";
-import { createRandomSchedule, createUser } from "../../../utils/helper";
+import { test, expect } from "../../../../fixtures/base-test";
+import { deleteScheduleByApi } from "../../../../utils/doctorHelper";
+import { createUserByApi, deleteUserByApi } from "../../../../utils/userHelper";
+import { randomSchedulesData } from "../../../testData/schedulesData";
 
 let token: string;
 let doctorId: string;
-let schedulesInfor: any;
+let schedulesData: any;
 
 test.beforeAll(async ({ authToken }) => {
   //get token, create a new doctor, create random schedule
   //get token
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
-  let user = await createUser(token, "Doctor");
+  let doctor = await createUserByApi(token, "Doctor");
   console.log(
-    `check create user: email = ${user.email}, userId-doctorId - ${user.id}`
+    `check create user: email = ${doctor.email}, userId-doctorId - ${doctor.id}`
   );
-  doctorId = user.id;
+  doctorId = doctor.id;
 
   //create random schedule
-  schedulesInfor = await createRandomSchedule(doctorId);
-  console.log("check schedules infor: ", schedulesInfor);
+  schedulesData = await randomSchedulesData(doctorId);
+  console.log("check schedules infor: ", schedulesData);
 });
 
-test.afterAll(async ({ request }) => {
-  //Teardown - delete user after creating
-  const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-user`,
-    {
-      headers: { Authorization: token },
-      params: { id: doctorId },
-    }
-  );
-  const data = await response.json();
-  if (response.status() !== 200 || data.errCode !== 0) {
-    throw new Error("Fail to delete user");
-  }
+test.afterAll(async () => {
+  await deleteUserByApi(token, doctorId);
 });
 
-test("should fail to create without invalid schedule infor", async ({
-  request,
-}) => {
+test("should fail to create without schedule data", async ({ request }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/bulk-create-schedules`,
     { headers: { Authorization: token } }
@@ -52,7 +41,7 @@ test("should fail to create without invalid schedule infor", async ({
 test("should fail to create without authorization", async ({ request }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/bulk-create-schedules`,
-    schedulesInfor
+    schedulesData
   );
 
   let data = await response.json();
@@ -67,7 +56,7 @@ test("should fail to create with invalid authorization", async ({
 }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/bulk-create-schedules`,
-    { headers: { Authorization: `Token ${token}` }, data: schedulesInfor }
+    { headers: { Authorization: `Token ${token}` }, data: schedulesData }
   );
 
   let data = await response.json();
@@ -83,7 +72,7 @@ test("should bulk create schedules successfully", async ({ request }) => {
     `${process.env.SERVER_URL}/api/bulk-create-schedules`,
     {
       headers: { Authorization: token },
-      data: schedulesInfor,
+      data: schedulesData,
     }
   );
 
@@ -93,13 +82,13 @@ test("should bulk create schedules successfully", async ({ request }) => {
   expect(data_1.message).toEqual("Add new schedules successfully");
 
   //Delete exist schedule and re-create schedule
-  const date = schedulesInfor[0].date;
-  const re_schedules = await createRandomSchedule(doctorId, date);
+  const date = schedulesData[0].date;
+  const reSchedulesData = await randomSchedulesData(doctorId, date);
   const response_2 = await request.post(
     `${process.env.SERVER_URL}/api/bulk-create-schedules`,
     {
       headers: { Authorization: token },
-      data: re_schedules,
+      data: reSchedulesData,
     }
   );
 
@@ -111,18 +100,5 @@ test("should bulk create schedules successfully", async ({ request }) => {
   );
 
   // Teardown - delete schedule after creating
-  const response = await request.delete(
-    `${process.env.SERVER_URL}/api/delete-schedules`,
-    {
-      headers: { Authorization: token },
-      data: {
-        doctorId: doctorId,
-        date: new Date(date),
-      },
-    }
-  );
-  let data = await response.json();
-  if (response.status() !== 200 || data.errCode !== 0) {
-    throw new Error("Fail to delete schedules");
-  }
+  await deleteScheduleByApi(token, doctorId, date);
 });

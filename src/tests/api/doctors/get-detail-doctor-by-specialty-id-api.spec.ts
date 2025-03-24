@@ -1,7 +1,12 @@
 import { test, expect } from "../../../fixtures/base-test";
-import { deleteDoctorInfor, deleteUser } from "../../../utils/helper";
+import {
+  createDoctorInforByApi,
+  deleteDoctorInforByApi,
+} from "../../../utils/doctorHelper";
+import { createUserByApi, deleteUserByApi } from "../../../utils/userHelper";
 
 let token: string;
+let doctor: any;
 let doctorInfor: any;
 
 //Get all doctor infors from DoctorInfor table
@@ -9,13 +14,14 @@ test.beforeAll(async ({ authToken, createDoctorInfor }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
 
   //create doctorInfor to ensure has 1 record at least
-  doctorInfor = createDoctorInfor;
+  doctor = await createUserByApi(token, "Doctor");
+  doctorInfor = await createDoctorInforByApi(token, doctor.id);
   console.log("check doctorInfor: ", doctorInfor);
 });
 
 test.afterAll(async () => {
-  await deleteDoctorInfor(token, doctorInfor.doctorId!);
-  await deleteUser(token, doctorInfor.doctorId!);
+  await deleteDoctorInforByApi(token, doctorInfor.doctorId!);
+  await deleteUserByApi(token, doctorInfor.doctorId!);
 });
 
 test("should fail to get without clinicId", async ({ request }) => {

@@ -1,107 +1,114 @@
+import path from "path";
 import { test, expect } from "../../../fixtures/base-test";
+import { getBase64 } from "../../../utils/commonUtils";
+import { User } from "../../../utils/types";
+import { ConfirmBookingDataType } from "../../testData/bookingData";
+import { deleteBookingByApi } from "../../../utils/bookingHelper";
 import {
-  deleteBooking,
-  deleteDoctorInfor,
-  deleteSchedule,
-  deleteUser,
-} from "../../../utils/helper";
+  deleteDoctorInforByApi,
+  deleteScheduleByApi,
+} from "../../../utils/doctorHelper";
+import { deleteUserByApi } from "../../../utils/userHelper";
 
 let token: string;
 let booking: any;
-let confirmData: any;
+let confirmBookingData: ConfirmBookingDataType;
+let patient: User;
+const imagePath = path.resolve(
+  __dirname,
+  "../../../tests/testData/image-test.png"
+);
 
-test.beforeAll(async ({ authToken, verifyBooking }) => {
+test.beforeAll(async ({ authToken, createBooking }) => {
   token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
 
   //verify booking
-  booking = verifyBooking;
+  const bookingInfor = createBooking;
+  booking = createBooking.booking;
+  patient = createBooking.patient_user;
   console.log("check booking: ", booking);
 
   //prepare confirmData
-  confirmData = {
+  confirmBookingData = {
     id: booking.id,
-    email: "testviewpoint93@gmail.com", //handle client side
-    file: "test file", //handle base64
-    fullname: "Test Viewpoint", //handle client side
+    email: patient.email,
+    file: getBase64(imagePath),
+    fullname: patient.firstName,
     lang: "vi", //fake because get from localstorage
   };
 });
 
 test.afterAll(async () => {
-  await deleteBooking(token, booking.id);
-  await deleteSchedule(token, booking.doctorId!, booking.date!);
-  await deleteDoctorInfor(token, booking.doctorId!);
-  await deleteUser(token, booking.doctorId!);
-  await deleteUser(token, booking.patientId!);
+  await deleteBookingByApi(token, booking.id);
+  await deleteScheduleByApi(token, booking.doctorId!, booking.date!);
+  await deleteDoctorInforByApi(token, booking.doctorId!);
+  await deleteUserByApi(token, booking.doctorId!);
+  await deleteUserByApi(token, booking.patientId!);
 });
 
 test("should fail to verify without id", async ({ request }) => {
-  let re_confirmData = JSON.parse(JSON.stringify(confirmData));
-  re_confirmData.id = "";
+  let reConfirmBookingData = JSON.parse(JSON.stringify(confirmBookingData));
+  reConfirmBookingData.id = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/confirm-book-done`,
     {
       headers: { Authorization: token },
-      data: re_confirmData,
+      data: reConfirmBookingData,
     }
   );
 
   let data = await response.json();
-  console.log("check data: ", data);
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual("Missing require parameter: id, email, file");
 });
 
 test("should fail to verify without email", async ({ request }) => {
-  let re_confirmData = JSON.parse(JSON.stringify(confirmData));
-  re_confirmData.email = "";
+  let reConfirmBookingData = JSON.parse(JSON.stringify(confirmBookingData));
+  reConfirmBookingData.email = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/confirm-book-done`,
     {
       headers: { Authorization: token },
-      data: re_confirmData,
+      data: reConfirmBookingData,
     }
   );
 
   let data = await response.json();
-  console.log("check data: ", data);
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual("Missing require parameter: id, email, file");
 });
 
 test("should fail to verify without file", async ({ request }) => {
-  let re_confirmData = JSON.parse(JSON.stringify(confirmData));
-  re_confirmData.file = "";
+  let reConfirmBookingData = JSON.parse(JSON.stringify(confirmBookingData));
+  reConfirmBookingData.file = "";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/confirm-book-done`,
     {
       headers: { Authorization: token },
-      data: re_confirmData,
+      data: reConfirmBookingData,
     }
   );
 
   let data = await response.json();
-  console.log("check data: ", data);
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(1);
   expect(data.message).toEqual("Missing require parameter: id, email, file");
 });
 
 test("should fail to verify with invalid id", async ({ request }) => {
-  let re_confirmData = JSON.parse(JSON.stringify(confirmData));
-  re_confirmData.id = "invalid_id";
+  let reConfirmBookingData = JSON.parse(JSON.stringify(confirmBookingData));
+  reConfirmBookingData.id = "invalid_id";
   const response = await request.post(
     `${process.env.SERVER_URL}/api/confirm-book-done`,
     {
       headers: { Authorization: token },
-      data: re_confirmData,
+      data: reConfirmBookingData,
     }
   );
 
   let data = await response.json();
-  console.log("check data: ", data);
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(2);
   expect(data.message).toEqual("Booking not found!");
@@ -112,7 +119,7 @@ test("should fail to confirm booking without authorization", async ({
 }) => {
   const response = await request.post(
     `${process.env.SERVER_URL}/api/confirm-book-done`,
-    confirmData
+    { data: confirmBookingData }
   );
 
   let data = await response.json();
@@ -129,7 +136,7 @@ test("should fail to confirm booking with invalid authorization", async ({
     `${process.env.SERVER_URL}/api/confirm-book-done`,
     {
       headers: { Authorization: `Token ${token}` },
-      data: confirmData,
+      data: confirmBookingData,
     }
   );
 
@@ -145,12 +152,11 @@ test("should confirm booking done successfully ", async ({ request }) => {
     `${process.env.SERVER_URL}/api/confirm-book-done`,
     {
       headers: { Authorization: token },
-      data: confirmData,
+      data: confirmBookingData,
     }
   );
 
   let data = await response.json();
-  console.log("check data: ", data);
   expect(response.status()).toEqual(200);
   expect(data.errCode).toEqual(0);
   expect(data.message).toEqual("Confirm book done successfully");
