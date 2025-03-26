@@ -1,11 +1,10 @@
-import { test, expect } from "../../../fixtures/auth-test";
+import { test } from "../../../fixtures/auth-test";
 import { NavigationBar } from "../../../pages/system/navigationBar";
-import { UserVuexPage } from "../../../pages/system/userVuexPage";
 
 test("navigation correctly", async ({ page }) => {
-  const userVuexPage = new UserVuexPage(page);
-  userVuexPage.goto();
   const navigationBar = new NavigationBar(page);
+  navigationBar.goto();
+  navigationBar.waitForLoad();
 
   await navigationBar.verifyUserDropdown();
   await navigationBar.verifyClinicButton();
