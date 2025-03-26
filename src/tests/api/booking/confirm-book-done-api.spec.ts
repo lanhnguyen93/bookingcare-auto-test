@@ -16,7 +16,7 @@ let confirmBookingData: ConfirmBookingDataType;
 let patient: User;
 const imagePath = path.resolve(
   __dirname,
-  "../../../tests/testData/image-test.png"
+  "../../../tests/testData/image-add-new.png"
 );
 
 test.beforeAll(async ({ authToken, createBooking }) => {

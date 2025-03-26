@@ -11,7 +11,7 @@ import {
 } from "../../../testData/specialtyData";
 import { Specialty } from "../../../../utils/types";
 
-const imagePath = path.resolve(__dirname, "../../../testData/image-test-2.png");
+const imagePath = path.resolve(__dirname, "../../../testData/image-edit.png");
 let token: string;
 let specialty: Specialty;
 let specialtyData: SpecialtyDataType;

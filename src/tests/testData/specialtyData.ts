@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import path from "path";
 import { getBase64 } from "../../utils/commonUtils";
 
-const _imagePath = path.resolve(__dirname, "./image-test.png");
+const _imagePath = path.resolve(__dirname, "./image-add-new.png");
 
 export interface SpecialtyDataType {
   name: string;
@@ -13,7 +13,7 @@ export interface SpecialtyDataType {
 
 /**
  *
- * @param imagePath (optional) default by using image-test.png
+ * @param imagePath (optional) default by using image-add-new.png
  * @returns
  */
 export function randomSpecialtyData(imagePath?: string): SpecialtyDataType {

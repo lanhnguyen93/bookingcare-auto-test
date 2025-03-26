@@ -8,7 +8,7 @@ import { ClinicDataType, randomClinicData } from "../../../testData/clinicData";
 import { Clinic } from "../../../../utils/types";
 import { convertBufferToBase64 } from "../../../../utils/commonUtils";
 
-const imagePath = path.resolve(__dirname, "../../../testData/image-test-2.png");
+const imagePath = path.resolve(__dirname, "../../../testData/image-edit.png");
 let token: string;
 let clinic: Clinic;
 let clinicData: ClinicDataType;

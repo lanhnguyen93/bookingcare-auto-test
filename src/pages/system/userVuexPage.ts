@@ -15,11 +15,11 @@ export class UserVuexPage extends Page {
   private readonly token = getToken();
   private imagePath = path.resolve(
     __dirname,
-    "../../tests/testData/image-test.png"
+    "../../tests/testData/image-add-new.png"
   );
   private editImagePath = path.resolve(
     __dirname,
-    "../../tests/testData/image-test-2.png"
+    "../../tests/testData/image-edit.png"
   );
   private users: User[];
 

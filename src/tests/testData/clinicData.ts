@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import path from "path";
 import { getAllcode, getBase64, randomValue } from "../../utils/commonUtils";
 
-const _imagePath = path.resolve(__dirname, "./image-test.png");
+const _imagePath = path.resolve(__dirname, "./image-add-new.png");
 
 export interface ClinicDataType {
   name: string;
@@ -15,7 +15,7 @@ export interface ClinicDataType {
 
 /**
  *
- * @param imagePath (optional) default by using image-test.png
+ * @param imagePath (optional) default by using image-add-new.png
  * @returns
  */
 export async function randomClinicData(

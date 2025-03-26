@@ -3,7 +3,7 @@ import path from "path";
 import { getBase64, randomValue } from "../../utils/commonUtils";
 import { Role } from "../../utils/types";
 
-const _imagePath = path.resolve(__dirname, "./image-test.png");
+const _imagePath = path.resolve(__dirname, "./image-add-new.png");
 
 export interface UserDataType {
   email: string;
