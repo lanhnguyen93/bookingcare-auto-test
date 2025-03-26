@@ -12,7 +12,7 @@ export const test = base.extend<AuthTestOptions>({
       await page.evaluate((token) => {
         localStorage.setItem("token", token);
       }, token);
-      await page.reload();
+      // await page.reload();
       await use();
     },
     { auto: true },

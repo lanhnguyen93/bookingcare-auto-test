@@ -70,7 +70,7 @@ test.describe("Verify case fail to login", () => {
   test("should fail to login with missing email", async () => {
     const response = await api.post("/api/login", {
       email: "",
-      password: process.env.CREATE_DATA_PASSWORD,
+      password: process.env.CREATE_DATA_PASSWORD!,
     });
 
     expect(response.data.errCode).toBe(1);

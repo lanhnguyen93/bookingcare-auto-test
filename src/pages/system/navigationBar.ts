@@ -1,5 +1,6 @@
 import { Page as PlaywrightPage, expect } from "@playwright/test";
 import { Page } from "../basePage";
+import user from "../../../.auth/user.json";
 
 export class NavigationBar extends Page {
   constructor(page: PlaywrightPage) {
@@ -21,7 +22,57 @@ export class NavigationBar extends Page {
   clinicButton = this.page.getByRole("link", { name: "Phòng khám" });
   specialtyButton = this.page.getByRole("link", { name: "Chuyên khoa" });
   handbookButton = this.page.getByRole("link", { name: "Cẩm nang" });
-  greetingText = this.page.locator("p.nav-link");
+  greetingText = this.page.locator(".greeting-text");
   languageDropdown = this.page.locator("#languageDropdown");
   logoutButton = this.page.getByRole("link", { name: "Đăng xuất" });
+
+  async verifyUserDropdown() {
+    await this.userDropdown.click();
+    await this.crudUserButton.click();
+    await expect(this.page).toHaveTitle("Manage User");
+
+    await this.userDropdown.click();
+    await this.crudVuexButton.click();
+    await expect(this.page).toHaveTitle("User Vuex");
+
+    await this.userDropdown.click();
+    await this.manageDoctorButton.click();
+    await expect(this.page).toHaveTitle("Manage Doctor");
+
+    await this.userDropdown.click();
+    await this.manageScheduleButton.click();
+    await expect(this.page).toHaveTitle("Manage Schedule");
+
+    await this.userDropdown.click();
+    await this.managePatientButton.click();
+    await expect(this.page).toHaveTitle("Manage Patient");
+  }
+
+  async verifyClinicButton() {
+    await this.clinicButton.click();
+    await expect(this.page).toHaveTitle("Manage Clinic");
+  }
+
+  async verifySpecialtyButton() {
+    await this.specialtyButton.click();
+    await expect(this.page).toHaveTitle("Manage Specialty");
+  }
+
+  async verifyGreetingText() {
+    let userData = user.userInfor;
+    expect(await this.greetingText.textContent()).toBe(
+      `Xin chào,  ${userData.firstName} ${userData.lastName}`
+    );
+  }
+
+  async verifyLanguageButton() {
+    this.languageDropdown.click();
+    expect(this.page.getByRole("link", { name: "English" })).toBeVisible;
+    expect(this.page.getByRole("link", { name: "Tiếng Việt" })).toBeVisible;
+  }
+
+  async verifyLogoutButton() {
+    await this.logoutButton.click();
+    await expect(this.page).toHaveTitle("Login");
+  }
 }

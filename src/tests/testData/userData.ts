@@ -15,7 +15,24 @@ export interface UserDataType {
   gender: string;
   image: string;
   roleId: string;
-  positionId?: string;
+  positionId: string;
+}
+
+export interface TestCreateUserDataType {
+  user: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    phonenumber: string;
+    gender: string;
+    image: string;
+    roleId: string;
+    positionId: string;
+  };
+  message: string;
+  titleTestcase: string;
 }
 
 export function randomUserData(role?: Role): UserDataType {
@@ -44,6 +61,7 @@ export function randomUserData(role?: Role): UserDataType {
     address: faker.location.city(),
     phonenumber: faker.phone.number(),
     gender: randomValue(["M", "F", "O"]),
+    positionId: randomValue(["P0", "P1", "P2", "P3", "P4"]),
     roleId: roleId,
     password: process.env.CREATE_DATA_PASSWORD
       ? process.env.CREATE_DATA_PASSWORD
@@ -52,3 +70,43 @@ export function randomUserData(role?: Role): UserDataType {
   };
   return user;
 }
+
+export const testCreateUserData: TestCreateUserDataType[] = [
+  {
+    user: {
+      ...randomUserData(),
+      email: "",
+    },
+    message: "Missing required parameter!",
+    titleTestcase: "fail without email",
+  },
+  {
+    user: {
+      ...randomUserData(),
+      password: "",
+    },
+    message: "Missing required parameter!",
+    titleTestcase: "fail without password",
+  },
+  {
+    user: {
+      ...randomUserData(),
+      email: process.env.USER_EMAIL || "",
+    },
+    message: "The email is already in used!",
+    titleTestcase: "fail with already email",
+  },
+];
+
+export const emptyUserData = {
+  email: "",
+  password: "",
+  firstName: "",
+  lastName: "",
+  phonenumber: "",
+  address: "",
+  gender: "",
+  roleId: "",
+  positionId: "",
+  image: "",
+};

@@ -67,3 +67,8 @@ export async function getAllcode(inputType: Allcode) {
 export function convertDatetimeToString(datetime: Date) {
   return new Date(datetime).toISOString().split("T")[0];
 }
+
+export function getToken() {
+  let token = process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN : "";
+  return token;
+}
