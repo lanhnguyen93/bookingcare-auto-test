@@ -70,7 +70,7 @@ export class UserVuexPage extends Page {
 
   async waitForLoad() {
     await this.page.waitForURL(this.pageUrl, { timeout: 30000 });
-    await expect(this.emailCells.first()).toBeVisible({ timeout: 30000 });
+    await expect(this.emailCells.last()).toBeVisible({ timeout: 30000 });
   }
 
   async verifyInputForm(user: UserDataType, isEdit: boolean) {
