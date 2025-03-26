@@ -3,8 +3,11 @@ import { Page } from "../basePage";
 import user from "../../../.auth/user.json";
 
 export class NavigationBar extends Page {
+  readonly pageUrl: string;
+
   constructor(page: PlaywrightPage) {
     super(page);
+    this.pageUrl = process.env.USERVUEX_URL || "/";
   }
 
   //Locators
@@ -25,6 +28,16 @@ export class NavigationBar extends Page {
   greetingText = this.page.locator(".greeting-text");
   languageDropdown = this.page.locator("#languageDropdown");
   logoutButton = this.page.getByRole("link", { name: "Đăng xuất" });
+
+  async goto() {
+    const response = await this.page.goto(this.pageUrl);
+    expect(response?.status()).toBeLessThan(400);
+  }
+
+  async waitForLoad() {
+    await this.page.waitForURL(this.pageUrl, { timeout: 30000 });
+    await expect(this.logoutButton).toBeVisible({ timeout: 30000 });
+  }
 
   async verifyUserDropdown() {
     await this.userDropdown.click();

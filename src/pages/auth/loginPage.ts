@@ -18,11 +18,10 @@ export class LoginPage extends Page {
   async goto() {
     const response = await this.page.goto(this.pageUrl);
     expect(response?.status()).toBeLessThan(400);
-    await this.page.waitForLoadState();
   }
 
   async waitForLoad() {
-    await this.page.waitForURL(this.pageUrl);
+    await this.page.waitForURL(this.pageUrl, { timeout: 30000 });
     await expect(this.page).toHaveTitle("Login");
   }
 

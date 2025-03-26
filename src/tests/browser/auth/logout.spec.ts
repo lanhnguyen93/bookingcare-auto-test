@@ -4,6 +4,8 @@ import { NavigationBar } from "../../../pages/system/navigationBar";
 
 test("logout successfully", async ({ page }) => {
   const navigationBar = new NavigationBar(page);
+  await navigationBar.goto();
+  await navigationBar.waitForLoad();
   await navigationBar.logoutButton.click();
   await expect(page).toHaveTitle("Login");
 
