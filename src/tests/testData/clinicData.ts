@@ -35,3 +35,12 @@ export async function randomClinicData(
   };
   return clinic;
 }
+
+export const emptyClinicData: ClinicDataType = {
+  name: "",
+  address: "",
+  descriptionMarkdown: "",
+  descriptionHTML: "",
+  provinceId: "",
+  image: "",
+};
