@@ -1,5 +1,5 @@
 import { expect, test } from "../../../../fixtures/auth-test";
-import { SpecialtyPage } from "../../../../pages/system/specialtyPage";
+import { ManageSpecialtyPage } from "../../../../pages/system/manageSpecialtyPage";
 import { getToken } from "../../../../utils/commonUtils";
 import {
   createSpecialtyByApi,
@@ -11,23 +11,25 @@ test("should delete specialty successfully", async ({ page }) => {
   const specialty = await createSpecialtyByApi(getToken());
 
   // Go to the CRUD Vuex page
-  const specialtyPage = new SpecialtyPage(page);
-  await specialtyPage.goto();
-  await specialtyPage.waitForLoad();
+  const manageSpecialtyPage = new ManageSpecialtyPage(page);
+  await manageSpecialtyPage.goto();
+  await manageSpecialtyPage.waitForLoad();
 
   // Delete specialty
-  await specialtyPage.specialtyCombobox.click();
+  await manageSpecialtyPage.specialtyCombobox.click();
   const specialtyItem = page
     .locator("li[role=option]")
     .getByText(specialty.name, { exact: true });
   await specialtyItem.click();
-  await specialtyPage.deleteButton.click();
+  await manageSpecialtyPage.deleteButton.click();
 
   // Verify the successfully message
-  await specialtyPage.verifyAlertMessage("Delete the specialty successfully");
+  await manageSpecialtyPage.verifyAlertMessage(
+    "Delete the specialty successfully"
+  );
 
   //Verify the specialty is deleted from the specialty list
-  await specialtyPage.specialtyCombobox.click();
+  await manageSpecialtyPage.specialtyCombobox.click();
   await expect(specialtyItem).toBeHidden;
 });
 
@@ -36,12 +38,12 @@ test("should fail to delete non-exist specialty", async ({ page }) => {
   const specialty = await createSpecialtyByApi(getToken());
 
   // Go to the CRUD Vuex page
-  const specialtyPage = new SpecialtyPage(page);
-  await specialtyPage.goto();
-  await specialtyPage.waitForLoad();
+  const manageSpecialtyPage = new ManageSpecialtyPage(page);
+  await manageSpecialtyPage.goto();
+  await manageSpecialtyPage.waitForLoad();
 
   // Select specialty
-  await specialtyPage.specialtyCombobox.click();
+  await manageSpecialtyPage.specialtyCombobox.click();
   const specialtyItem = page
     .locator("li[role=option]")
     .getByText(specialty.name, { exact: true });
@@ -51,10 +53,10 @@ test("should fail to delete non-exist specialty", async ({ page }) => {
   await deleteSpecialtyByApi(getToken(), specialty.id);
 
   // Verify error message
-  await specialtyPage.deleteButton.click();
-  await specialtyPage.verifyAlertMessage("The specialty is not exist!");
+  await manageSpecialtyPage.deleteButton.click();
+  await manageSpecialtyPage.verifyAlertMessage("The specialty is not exist!");
 
   // Verify specialty not in the list
-  await specialtyPage.specialtyCombobox.click();
+  await manageSpecialtyPage.specialtyCombobox.click();
   await expect(specialtyItem).toBeHidden;
 });

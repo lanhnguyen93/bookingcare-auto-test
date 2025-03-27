@@ -5,7 +5,7 @@ import path from "path";
 import { Specialty } from "../../utils/types";
 import { convertBufferToBase64 } from "../../utils/commonUtils";
 
-export class SpecialtyPage extends Page {
+export class ManageSpecialtyPage extends Page {
   readonly pageUrl: string;
   private imagePath = path.resolve(
     __dirname,
