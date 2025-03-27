@@ -4,6 +4,7 @@ import { randomSpecialtyData } from "../tests/testData/specialtyData";
 import { randomClinicData } from "../tests/testData/clinicData";
 import { randomDoctorInforData } from "../tests/testData/doctorInforData";
 import { randomSchedulesData } from "../tests/testData/schedulesData";
+import { Specialty } from "./types";
 
 export async function getAllSpecialtiesByApi() {
   const response = await axios.get(
@@ -30,6 +31,22 @@ export async function deleteSpecialtyByApi(token: string, specialtyId: string) {
   });
   if (response.status !== 200 || response.data.errCode !== 0) {
     throw new Error("Failed to delete specialty");
+  }
+}
+
+export async function deleteSpecialtyByName(
+  token: string,
+  specialtyName: string
+) {
+  const specialties = await getAllSpecialtiesByApi();
+  let id = "";
+  const specialty = specialties.find(
+    (specialty: Specialty) => specialty.name === specialtyName
+  );
+  if (specialty.id) {
+    await deleteSpecialtyByApi(token, specialty.id);
+  } else {
+    throw new Error("The specialty is not exist");
   }
 }
 

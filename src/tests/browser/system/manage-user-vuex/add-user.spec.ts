@@ -31,6 +31,12 @@ test("Should add a new user successfully", async ({ page }) => {
 
   //Verify clear form after adding user successfully
   await userVuexPage.verifyInputForm(emptyUserData, false);
+
+  //Teardown - delete user
+  await page
+    .locator("table tbody tr", { hasText: userData.email })
+    .locator(".delete-icon")
+    .click();
 });
 
 testCreateUserData.forEach(({ user, message, titleTestcase }) => {

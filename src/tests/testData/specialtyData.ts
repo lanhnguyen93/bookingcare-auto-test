@@ -28,3 +28,10 @@ export function randomSpecialtyData(imagePath?: string): SpecialtyDataType {
   };
   return specialty;
 }
+
+export const emptySpecialData: SpecialtyDataType = {
+  name: "",
+  image: "",
+  descriptionHTML: "",
+  descriptionMarkdown: "",
+};

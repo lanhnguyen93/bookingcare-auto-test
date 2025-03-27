@@ -1,1 +1,1 @@
-{"errCode":0,"message":"OK!","userInfor":{"id":131,"email":"admin@test.com","firstName":"Test","lastName":"Admin","roleId":""},"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMxLCJlbWFpbCI6ImFkbWluQHRlc3QuY29tIiwiaWF0IjoxNzQyOTk2OTY4fQ.j0g3mOqAyG5TviyeRiZ6bxh-NeluxIic-mtUp6I_Bbs"}
+{"errCode":0,"message":"OK!","userInfor":{"id":131,"email":"admin@test.com","firstName":"Test","lastName":"Admin","roleId":"R1"},"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMxLCJlbWFpbCI6ImFkbWluQHRlc3QuY29tIiwiaWF0IjoxNzQzMDU3MzAxfQ.CPnwL_CkC1qkayC_sR2eTvcYpIgLai2JmfKqgoQ4IHQ"}
