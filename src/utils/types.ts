@@ -75,3 +75,11 @@ export type Allcode =
   | "PRICE"
   | "PAYMENT"
   | "PROVINCE";
+
+export type AllcodeArray = {
+  id: string;
+  key: string;
+  type: string;
+  valueEn: string;
+  valueVi: string;
+};

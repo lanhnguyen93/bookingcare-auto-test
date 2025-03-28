@@ -90,6 +90,29 @@ export async function deleteClinicByName(token: string, clinicName: string) {
   }
 }
 
+export async function getAllDoctorByApi() {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-all-doctors`
+  );
+  let data = response.data;
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to get all doctors");
+  }
+  return data.data;
+}
+
+export async function getDetailDoctorByDoctorIdByApi(doctorId: string) {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-detail-doctor-by-doctor-id`,
+    { params: { doctorId: doctorId } }
+  );
+  let data = response.data;
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to get detail doctor");
+  }
+  return data.doctorInfor;
+}
+
 export async function createDoctorInforByApi(token: string, doctorId: string) {
   const doctorInforData = await randomDoctorInforData(doctorId);
   const response = await axios.post(

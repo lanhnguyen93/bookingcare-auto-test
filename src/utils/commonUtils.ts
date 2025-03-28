@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Allcode } from "./types";
+import { Allcode, AllcodeArray } from "./types";
 import axios from "axios";
 
 /**
