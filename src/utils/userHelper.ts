@@ -24,6 +24,17 @@ export async function deleteUserByApi(token: string, userId: string) {
   }
 }
 
+export async function deleteUserByEmail(token: string, email: string) {
+  const users = await getAllUserByApi(token);
+  let id = "";
+  const user = users.find((user: User) => user.email === email);
+  if (user.id) {
+    await deleteUserByApi(token, user.id);
+  } else {
+    throw new Error("The user is not exist");
+  }
+}
+
 /**
  * The function get user by Id
  * @param token

@@ -1,7 +1,6 @@
 import { expect, test } from "../../../../fixtures/auth-test";
 import { UserVuexPage } from "../../../../pages/system/userVuexPage";
 import { getToken } from "../../../../utils/commonUtils";
-import { verifyAlertMessage } from "../../../../utils/pageHelper";
 import { deleteUserByApi } from "../../../../utils/userHelper";
 
 test("should delete user successfully", async ({ page, createAdmin }) => {

@@ -1,6 +1,7 @@
 import { expect, test } from "../../../../fixtures/auth-test";
 import { UserVuexPage } from "../../../../pages/system/userVuexPage";
-import { verifyAlertMessage } from "../../../../utils/pageHelper";
+import { getToken } from "../../../../utils/commonUtils";
+import { deleteUserByEmail } from "../../../../utils/userHelper";
 import {
   emptyUserData,
   randomUserData,
@@ -33,10 +34,7 @@ test("Should add a new user successfully", async ({ page }) => {
   await userVuexPage.verifyInputForm(emptyUserData, false);
 
   //Teardown - delete user
-  await page
-    .locator("table tbody tr", { hasText: userData.email })
-    .locator(".delete-icon")
-    .click();
+  await deleteUserByEmail(getToken(), userData.email);
 });
 
 testCreateUserData.forEach(({ user, message, titleTestcase }) => {
