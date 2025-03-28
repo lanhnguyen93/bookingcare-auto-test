@@ -24,7 +24,7 @@ export async function randomSchedulesData(
   doctorId: string,
   _date?: string
 ): Promise<ScheduleDataArray> {
-  let date: string = _date ? _date : getRandomDateFromToday();
+  let date: string = _date ? _date.split("T")[0] : getRandomDateFromToday();
   const timeTypes = await getAllcode("TIME");
   const randomTimetypes = getRandomElements(timeTypes);
 
