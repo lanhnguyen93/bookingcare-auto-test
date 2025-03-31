@@ -6,10 +6,11 @@ import { randomDoctorInforData } from "../tests/testData/doctorInforData";
 import { randomSchedulesData } from "../tests/testData/schedulesData";
 import { Clinic, Specialty } from "./types";
 
-export async function getAllSpecialtiesByApi() {
+export async function getAllSpecialtiesByApi(specialtyId?: string) {
+  const id = specialtyId ? specialtyId : "ALL";
   const response = await axios.get(
     `${process.env.SERVER_URL}/api/get-all-specialty`,
-    { params: { id: "ALL" } }
+    { params: { id: id } }
   );
   let data = response.data;
   return data.specialties;
@@ -97,6 +98,19 @@ export async function getAllDoctorByApi() {
   let data = response.data;
   if (response.status !== 200 || response.data.errCode !== 0) {
     throw new Error("Failed to get all doctors");
+  }
+  return data.data;
+}
+
+export async function getTopDoctorByApi() {
+  const limit = process.env.DOCTOR_LIMIT ? process.env.DOCTOR_LIMIT : 10;
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/top-doctor-home`,
+    { params: { limit: limit } }
+  );
+  let data = response.data;
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to get top doctors");
   }
   return data.data;
 }
