@@ -59,12 +59,6 @@ test.describe("Verify Schedule", () => {
   test("should display schedule by date correctly", async ({ page }) => {
     const detailDoctorPage = new DetailDoctorPage(page, doctor.id);
 
-    // verify when have schedules
-    await detailDoctorPage.calendar.fill(scheduleDate);
-    await page.waitForTimeout(500);
-    await detailDoctorPage.verifyTimeblock(schedules);
-    await expect(detailDoctorPage.emptyTime).toBeHidden;
-
     // verify when no schedules
     let emptyDate = new Date(schedules[0].date);
     emptyDate.setDate(emptyDate.getDate() + 1);
@@ -72,5 +66,29 @@ test.describe("Verify Schedule", () => {
     await detailDoctorPage.calendar.fill(formattedEmptyDate);
     await expect(detailDoctorPage.emptyTime).toBeVisible;
     await expect(detailDoctorPage.timeblocks).toBeHidden;
+
+    // verify when have schedules
+    await detailDoctorPage.calendar.fill(scheduleDate);
+    await page.waitForTimeout(500);
+    await detailDoctorPage.verifyTimeblock(schedules);
+    await expect(detailDoctorPage.emptyTime).toBeHidden;
+  });
+
+  test("should navigate booking page when clicking a schedule", async ({
+    page,
+  }) => {
+    const detailDoctorPage = new DetailDoctorPage(page, doctor.id);
+    await detailDoctorPage.calendar.fill(scheduleDate);
+    await page.waitForTimeout(500);
+
+    const timeType = await detailDoctorPage.timeblocks
+      .first()
+      .getAttribute("value");
+    const bookingUrl = `${process.env.BOOKING_URL!}/${
+      doctor.id
+    }/${scheduleDate}/${timeType}`;
+
+    await detailDoctorPage.timeblocks.first().click();
+    await page.waitForURL(bookingUrl, { timeout: 30000 });
   });
 });
