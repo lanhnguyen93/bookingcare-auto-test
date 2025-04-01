@@ -130,7 +130,7 @@ export class HomePage extends Page {
         ? await getAllSpecialtiesByApi(doctorSpecialtyId)
         : "";
       const doctorSpecialtyTitle = doctorSpecialtyData
-        ? doctorSpecialtyData[0].name
+        ? doctorSpecialtyData.name
         : "";
       await expect(doctorTitleItem).toHaveText(doctorTitle);
       await expect(this.doctorSpecialty.nth(i)).toHaveText(
