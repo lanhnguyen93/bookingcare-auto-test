@@ -6,7 +6,9 @@ import { randomDoctorInforData } from "../tests/testData/doctorInforData";
 import { randomSchedulesData } from "../tests/testData/schedulesData";
 import { Clinic, Specialty } from "./types";
 
-export async function getAllSpecialtiesByApi(specialtyId?: string) {
+export async function getAllSpecialtiesByApi(
+  specialtyId?: string
+): Promise<Specialty[]> {
   const id = specialtyId ? specialtyId : "ALL";
   const response = await axios.get(
     `${process.env.SERVER_URL}/api/get-all-specialty`,
@@ -44,7 +46,7 @@ export async function deleteSpecialtyByName(
   const specialty = specialties.find(
     (specialty: Specialty) => specialty.name === specialtyName
   );
-  if (specialty.id) {
+  if (specialty) {
     await deleteSpecialtyByApi(token, specialty.id);
   } else {
     throw new Error("The specialty is not exist");
@@ -113,6 +115,26 @@ export async function getTopDoctorByApi() {
     throw new Error("Failed to get top doctors");
   }
   return data.data;
+}
+
+export async function getDetailDoctorBySpecialtyIdAndProvinceIdByAPI(
+  specialtyId: any,
+  provinceId: string
+) {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-detail-doctor-by-specialty-id-and-province-id`,
+    {
+      params: {
+        specialtyId: specialtyId,
+        provinceId: provinceId,
+      },
+    }
+  );
+  let data = response.data;
+  if (response.status !== 200) {
+    throw new Error("Failed to get detail doctors");
+  }
+  return data.errCode === 0 ? data.doctorInfors : null;
 }
 
 export async function getDetailDoctorByDoctorIdByApi(doctorId: string) {
