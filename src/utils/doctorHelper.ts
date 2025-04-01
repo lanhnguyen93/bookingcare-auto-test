@@ -6,9 +6,7 @@ import { randomDoctorInforData } from "../tests/testData/doctorInforData";
 import { randomSchedulesData } from "../tests/testData/schedulesData";
 import { Clinic, Specialty } from "./types";
 
-export async function getAllSpecialtiesByApi(
-  specialtyId?: string
-): Promise<Specialty[]> {
+export async function getAllSpecialtiesByApi(specialtyId?: string) {
   const id = specialtyId ? specialtyId : "ALL";
   const response = await axios.get(
     `${process.env.SERVER_URL}/api/get-all-specialty`,
