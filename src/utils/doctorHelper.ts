@@ -149,6 +149,18 @@ export async function getDetailDoctorByDoctorIdByApi(doctorId: string) {
   return data.doctorInfor;
 }
 
+export async function getDetailDoctorByIdByApi(doctorId: string) {
+  const response = await axios.get(
+    `${process.env.SERVER_URL}/api/get-detail-doctor-by-id`,
+    { params: { id: doctorId } }
+  );
+  let data = response.data;
+  if (response.status !== 200 || response.data.errCode !== 0) {
+    throw new Error("Failed to get detail doctor");
+  }
+  return data.user;
+}
+
 export async function createDoctorInforByApi(token: string, doctorId: string) {
   const doctorInforData = await randomDoctorInforData(doctorId);
   const response = await axios.post(
