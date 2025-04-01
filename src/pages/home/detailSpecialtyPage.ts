@@ -1,11 +1,6 @@
 import { Page as PlaywrightPage, expect } from "@playwright/test";
 import { Page } from "../basePage";
-import {
-  getAllSpecialtiesByApi,
-  getDetailDoctorBySpecialtyIdAndProvinceIdByAPI,
-} from "../../utils/doctorHelper";
-import { spec } from "node:test/reporters";
-import { getAllcode } from "../../utils/commonUtils";
+import { getAllSpecialtiesByApi } from "../../utils/doctorHelper";
 
 export class DetailSpecialtyPage extends Page {
   readonly pageUrl: string;
@@ -41,7 +36,7 @@ export class DetailSpecialtyPage extends Page {
 
   async verifySpecialtyTitle(specialtyId: string) {
     const specialtyInfor = await getAllSpecialtiesByApi(specialtyId);
-    await expect(this.specialtyTitle).toHaveText(specialtyInfor.name);
+    await expect(this.specialtyTitle).toHaveText(specialtyInfor[0].name);
     const textAlign = await this.specialtyTitle.evaluate((el) => {
       return window.getComputedStyle(el).textAlign;
     });
@@ -80,7 +75,7 @@ export class DetailSpecialtyPage extends Page {
         return element.innerHTML;
       }
     );
-    await expect(specialtyHTMLContent).toBe(specialtyInfor.descriptionHTML);
+    await expect(specialtyHTMLContent).toBe(specialtyInfor[0].descriptionHTML);
   }
 
   async verifyDisplaySelectProvinceButton(value: string[], text: string[]) {
@@ -95,15 +90,4 @@ export class DetailSpecialtyPage extends Page {
       await expect(this.selectionOptions.nth(i)).toHaveText(text[i]);
     }
   }
-
-  // async verifyDisplayEmptyText(doctors: any[]) {
-  //   if (!doctors) {
-  //     await expect(this.emptyText).toBeHidden;
-  //     console.log("hidden");
-  //     //TOdo
-  //   } else {
-  //     await expect(this.emptyText).toBeVisible();
-  //     console.log("visible");
-  //   }
-  // }
 }
