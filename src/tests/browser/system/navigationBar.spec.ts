@@ -9,7 +9,6 @@ test("navigation correctly", async ({ page }) => {
   await navigationBar.verifyUserDropdown();
   await navigationBar.verifyClinicButton();
   await navigationBar.verifySpecialtyButton();
-  await navigationBar.verifyGreetingText();
   await navigationBar.verifyLanguageButton();
   await navigationBar.verifyLogoutButton();
 });

@@ -22,8 +22,6 @@ type TestOptions = {
   page: Page;
 };
 
-const authFile = ".auth/user.json";
-
 export const test = base.extend<TestOptions>({
   authToken: [
     async ({}, use) => {
@@ -36,7 +34,6 @@ export const test = base.extend<TestOptions>({
       if (response.status !== 200 || !data.token) {
         throw new Error("Failed to login and get token");
       }
-      fs.writeFileSync(authFile, JSON.stringify(data));
       process.env["ACCESS_TOKEN"] = data.token;
       await use("");
     },

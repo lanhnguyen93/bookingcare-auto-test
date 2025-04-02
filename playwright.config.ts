@@ -12,6 +12,10 @@ export default defineConfig({
   use: {
     baseURL: process.env.VUE_URL,
     trace: "on-first-retry",
+    video: {
+      mode: "off",
+      size: { width: 1920, height: 1080 },
+    }, //run test by command line
   },
 
   projects: [

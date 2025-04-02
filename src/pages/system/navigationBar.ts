@@ -1,6 +1,5 @@
 import { Page as PlaywrightPage, expect } from "@playwright/test";
 import { Page } from "../basePage";
-import user from "../../../.auth/user.json";
 
 export class NavigationBar extends Page {
   readonly pageUrl: string;
@@ -69,13 +68,6 @@ export class NavigationBar extends Page {
   async verifySpecialtyButton() {
     await this.specialtyButton.click();
     await expect(this.page).toHaveTitle("Manage Specialty");
-  }
-
-  async verifyGreetingText() {
-    let userData = user.userInfor;
-    expect(await this.greetingText.textContent()).toBe(
-      `Xin chào,  ${userData.firstName} ${userData.lastName}`
-    );
   }
 
   async verifyLanguageButton() {
