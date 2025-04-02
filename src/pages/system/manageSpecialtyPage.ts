@@ -22,6 +22,7 @@ export class ManageSpecialtyPage extends Page {
   }
 
   // Locators
+  specialtyFrame = this.page.locator(".specialty-content");
   specialtyCombobox = this.page.getByRole("combobox");
   specialtyItems = this.page.locator("li[role=option]");
   specialtyName = this.page.locator(".content-left input");

@@ -10,6 +10,7 @@ export class LoginPage extends Page {
   }
 
   //Locators
+  loginFrame = this.page.locator(".login-container");
   email = this.page.getByPlaceholder("Enter your email");
   password = this.page.getByPlaceholder("Enter your password");
   loginButton = this.page.getByRole("button", { name: "Login" });

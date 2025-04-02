@@ -13,7 +13,16 @@ export class HomePage extends Page {
   }
 
   // Locators
-  specialtiesFrame = this.page.locator(".specialty-content");
+  headerFrame = this.page.locator(".home-header-container");
+  footerFrame = this.page.locator(".home-footer-container");
+  homeAiFrame = this.page.locator(".home-body-ai");
+  allServicesFrame = this.page.locator(".all-services");
+  specialtyFrame = this.page.locator(".specialty-container");
+  clinicFrame = this.page.locator(".clinic-container");
+  doctorFrame = this.page.locator(".doctor-container");
+  liveHealthyFrame = this.page.locator(".live-healthy-container");
+  communicationFrame = this.page.locator(".communication-container");
+
   specialtyItems = this.page
     .locator(".specialty-content")
     .locator(".frame-content");

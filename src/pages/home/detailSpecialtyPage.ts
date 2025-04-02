@@ -15,6 +15,8 @@ export class DetailSpecialtyPage extends Page {
   }
 
   // Locators
+  specialtyFrame = this.page.locator(".item-infor");
+  doctorFrame = this.page.locator(".bottom-content");
   doctorInforItems = this.page.locator(".doctor-infor");
   specialtyInfor = this.page.locator(".top-content");
   selectProvince = this.page.locator(".select-province select");

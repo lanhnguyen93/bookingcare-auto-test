@@ -1,6 +1,5 @@
 import { Locator, Page as PlaywrightPage, expect } from "@playwright/test";
 import { Page } from "../basePage";
-import { da } from "@faker-js/faker";
 import { User } from "../../utils/types";
 import { getAllcode } from "../../utils/commonUtils";
 import { getAllDoctorByApi } from "../../utils/doctorHelper";
@@ -15,6 +14,17 @@ export class ManageSchedulePage extends Page {
   }
 
   //Locators
+  headerFrame = this.page.locator("header");
+  userMenu = this.page.locator("#userDropdown");
+  languageMenu = this.page.locator("#languageDropdown");
+  userDropdown = this.page
+    .locator(".dropdown", { hasText: "Người dùng" })
+    .locator(".dropdown-menu");
+  languageDropdown = this.page
+    .locator(".dropdown", { hasText: "Ngôn ngữ" })
+    .locator(".dropdown-menu");
+
+  scheduleFrame = this.page.locator(".manage-schedule-container");
   pageTitle = this.page.locator(".manage-schedule-title");
   doctorCombobox = this.page
     .locator(".content-left")

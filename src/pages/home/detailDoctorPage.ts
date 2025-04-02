@@ -14,6 +14,8 @@ export class DetailDoctorPage extends Page {
   }
 
   // Locators
+  detailDoctorFrame = this.page.locator(".detail-doctor-container");
+  detailPaymentFrame = this.page.locator(".detail-info");
   detaiDoctor = this.page.locator(".doctor-header");
   doctorImage = this.page.locator(".image");
   doctorTitle = this.page.locator(".title");

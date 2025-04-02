@@ -24,6 +24,7 @@ export class ManageDoctorInforPage extends Page {
   }
 
   // Locators
+  doctorInforFrame = this.page.locator(".manage-doctor-container");
   pageTitle = this.page.locator(".manage-doctor-title");
   doctorLoadingIndicator = this.page
     .locator(".content-doctor-name")

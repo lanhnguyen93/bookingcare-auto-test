@@ -2,7 +2,11 @@
   "name": "auto-test",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "api-test": "npx playwright test src/tests/api",
+    "browser-test": "npx playwright test src/tests/browser",
+    "visual-test": "npx playwright test src/tests/visual"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

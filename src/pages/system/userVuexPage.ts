@@ -29,6 +29,8 @@ export class UserVuexPage extends Page {
   }
 
   //Locators
+  inputFrame = this.page.locator(".user-content");
+  listFrame = this.page.locator(".user-list-content");
   titleForm = this.page.locator(".user-header");
   emailInput = this.page.getByPlaceholder("Email");
   passwordInput = this.page.getByPlaceholder("Password");

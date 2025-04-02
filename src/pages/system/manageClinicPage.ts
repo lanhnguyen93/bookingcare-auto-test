@@ -1,8 +1,7 @@
 import { Page as PlaywrightPage, expect } from "@playwright/test";
 import { Page } from "../basePage";
-import { SpecialtyDataType } from "../../tests/testData/specialtyData";
 import path from "path";
-import { Clinic, Specialty } from "../../utils/types";
+import { Clinic } from "../../utils/types";
 import { convertBufferToBase64 } from "../../utils/commonUtils";
 import { ClinicDataType } from "../../tests/testData/clinicData";
 
@@ -23,6 +22,7 @@ export class ManageClinicPage extends Page {
   }
 
   // Locators
+  clinicFrame = this.page.locator(".clinic-content");
   clinicCombobox = this.page.locator(".all-clinic").getByRole("combobox");
   clinicItems = this.page.locator(".all-clinic").locator("li[role=option]");
   clinicName = this.page.locator(".content-top").locator("input");

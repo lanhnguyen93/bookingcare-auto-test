@@ -10,7 +10,15 @@ export class NavigationBar extends Page {
   }
 
   //Locators
-  userDropdown = this.page.locator("#userDropdown");
+  headerFrame = this.page.locator("header");
+  userMenu = this.page.locator("#userDropdown");
+  languageMenu = this.page.locator("#languageDropdown");
+  userDropdown = this.page
+    .locator(".dropdown", { hasText: "Người dùng" })
+    .locator(".dropdown-menu");
+  languageDropdown = this.page
+    .locator(".dropdown", { hasText: "Ngôn ngữ" })
+    .locator(".dropdown-menu");
   crudUserButton = this.page.getByRole("link", { name: "CRUD User" });
   crudVuexButton = this.page.getByRole("link", { name: "CRUD Vuex" });
   manageDoctorButton = this.page.getByRole("link", { name: "Quản lý bác sĩ" });
@@ -25,7 +33,6 @@ export class NavigationBar extends Page {
   specialtyButton = this.page.getByRole("link", { name: "Chuyên khoa" });
   handbookButton = this.page.getByRole("link", { name: "Cẩm nang" });
   greetingText = this.page.locator(".greeting-text");
-  languageDropdown = this.page.locator("#languageDropdown");
   logoutButton = this.page.getByRole("link", { name: "Đăng xuất" });
 
   async goto() {
@@ -71,7 +78,7 @@ export class NavigationBar extends Page {
   }
 
   async verifyLanguageButton() {
-    this.languageDropdown.click();
+    this.languageMenu.click();
     expect(this.page.getByRole("link", { name: "English" })).toBeVisible;
     expect(this.page.getByRole("link", { name: "Tiếng Việt" })).toBeVisible;
   }

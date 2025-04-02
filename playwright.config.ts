@@ -7,6 +7,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : 1,
+  expect: {
+    timeout: 2000,
+    toMatchSnapshot: { maxDiffPixels: 50 },
+  },
   reporter: "html",
 
   use: {
@@ -17,6 +21,7 @@ export default defineConfig({
       size: { width: 1920, height: 1080 },
     }, //run test by command line
   },
+  outputDir: "test-results/screenshots",
 
   projects: [
     {
