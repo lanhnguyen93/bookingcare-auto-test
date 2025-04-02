@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { DetailSpecialtyPage } from "../../pages/home/detailSpecialtyPage";
 
-test("should display layout correctly", async ({ page }) => {
+test("detail specialty page", async ({ page }) => {
   const detailSpecialtyPage = new DetailSpecialtyPage(
     page,
     process.env.SPECIALTY_ID!

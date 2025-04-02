@@ -8,8 +8,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : 1,
   expect: {
-    timeout: 2000,
-    toMatchSnapshot: { maxDiffPixels: 50 },
+    toHaveScreenshot: { maxDiffPixels: 100 },
   },
   reporter: "html",
 

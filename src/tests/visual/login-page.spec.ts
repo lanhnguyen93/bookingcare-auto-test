@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { LoginPage } from "../../pages/auth/loginPage";
 
-test("should display layout correctly", async ({ page }) => {
+test("login page", async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.goto();
   await loginPage.waitForLoad();

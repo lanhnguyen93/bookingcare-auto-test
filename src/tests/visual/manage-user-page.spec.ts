@@ -1,7 +1,7 @@
 import { expect, test } from "../../fixtures/auth-test";
 import { UserVuexPage } from "../../pages/system/userVuexPage";
 
-test("Should display layout correctly", async ({ page }) => {
+test("manage user page", async ({ page }) => {
   const userVuexPage = new UserVuexPage(page);
   await userVuexPage.goto();
   await userVuexPage.waitForLoad();

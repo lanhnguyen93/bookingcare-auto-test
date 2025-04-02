@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { DetailDoctorPage } from "../../pages/home/detailDoctorPage";
 
-test("should display layout correctly", async ({ page }) => {
+test("detail doctor page", async ({ page }) => {
   const detailDoctorPage = new DetailDoctorPage(page, process.env.DOCTOR_ID!);
   await detailDoctorPage.goto();
   await detailDoctorPage.waitForLoad();

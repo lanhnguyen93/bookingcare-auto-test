@@ -1,7 +1,7 @@
 import { expect, test } from "../../fixtures/auth-test";
 import { ManageSpecialtyPage } from "../../pages/system/manageSpecialtyPage";
 
-test("should display layout correctly", async ({ page }) => {
+test("manage specialty page", async ({ page }) => {
   const manageSpecialtyPage = new ManageSpecialtyPage(page);
   await manageSpecialtyPage.goto();
   await manageSpecialtyPage.waitForLoad();

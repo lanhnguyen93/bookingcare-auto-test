@@ -1,7 +1,7 @@
 import { expect, test } from "../../fixtures/auth-test";
 import { ManagePatientPage } from "../../pages/system/managePatientPage";
 
-test("should display layout correctly", async ({ page }) => {
+test("manage patient page", async ({ page }) => {
   const managePatientPage = new ManagePatientPage(page);
   await managePatientPage.goto();
   await managePatientPage.waitForLoad();
