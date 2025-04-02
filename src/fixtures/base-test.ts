@@ -1,6 +1,6 @@
-import { test as base } from "@playwright/test";
+// import { test as base } from "@playwright/test";
+import { test as base } from "@applitools/eyes-playwright/fixture";
 import { Page } from "../pages/basePage";
-import fs from "fs";
 import { api } from "../utils/api";
 import { createUserByApi } from "../utils/userHelper";
 import { createDoctorInforByApi } from "../utils/doctorHelper";

@@ -46,23 +46,23 @@ export class NavigationBar extends Page {
   }
 
   async verifyUserDropdown() {
-    await this.userDropdown.click();
+    await this.userMenu.click();
     await this.crudUserButton.click();
     await expect(this.page).toHaveTitle("Manage User");
 
-    await this.userDropdown.click();
+    await this.userMenu.click();
     await this.crudVuexButton.click();
     await expect(this.page).toHaveTitle("User Vuex");
 
-    await this.userDropdown.click();
+    await this.userMenu.click();
     await this.manageDoctorButton.click();
     await expect(this.page).toHaveTitle("Manage Doctor");
 
-    await this.userDropdown.click();
+    await this.userMenu.click();
     await this.manageScheduleButton.click();
     await expect(this.page).toHaveTitle("Manage Schedule");
 
-    await this.userDropdown.click();
+    await this.userMenu.click();
     await this.managePatientButton.click();
     await expect(this.page).toHaveTitle("Manage Patient");
   }

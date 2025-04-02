@@ -5,6 +5,7 @@
   "scripts": {
     "api-test": "npx playwright test src/tests/api",
     "browser-test": "npx playwright test src/tests/browser",
+    "eyes-test": "npx playwright test src/tests/eyes",
     "visual-test": "npx playwright test src/tests/visual"
   },
   "keywords": [],
@@ -13,6 +14,7 @@
   "type": "commonjs",
   "description": "",
   "devDependencies": {
+    "@applitools/eyes-playwright": "^1.37.0",
     "@playwright/test": "^1.51.0",
     "@types/node": "^22.13.10"
   },
