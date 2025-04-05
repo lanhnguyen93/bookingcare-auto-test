@@ -1,0 +1,10 @@
+1. Visual Testing
+   . Khi chạy test cần tạo lại db và import file bookingcare_test.sql
+   . Run command: npm visual test
+   . Update baseline: npx playwright test --update-snapshots
+
+2. Khi chạy docker backend, frontend thì quay lại commit ngày 4/4/2025
+
+3. Xử lý CI gặp 1 số rắc rối
+   . Đọc biến môi trường. Mình không muốn đưa file .env lên git, kể cả đưa lên nó cũng không đọc được
+   . Chưa chắc chắn bước tạo MySQL db trên CI: vì không check được db đang như thế nào? có table hay chưa, có data sample hay chưa
